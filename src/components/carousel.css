@@ -1,0 +1,43 @@
+.carousel {
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  
+  background-color: white;
+  border-radius: 8px;
+  
+ 
+
+}
+
+.carousel-track {
+  display: flex ;
+  flex-direction: row;
+  gap: 1rem;
+  transition: transform 0.3s ease;
+  will-change: transform;
+  padding: 10px;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  background: rgba(0, 0, 0, 0.555);
+  border: none;
+  font-size: 2rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  color: white;
+}
+
+
+
+.carousel-btn.left {
+  left: 0.5rem;
+}
+
+.carousel-btn.right {
+  right: 0.5rem;
+}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="/src/index.css" />
+        <link rel="stylesheet" href="/src/components/card.css" />
+        <link rel="stylesheet" href="/src/components/carousel.css" />
+        <link rel="stylesheet" href="/src/components/loginPage.css" />
+        <link rel="stylesheet" href="/style.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+            rel="stylesheet"
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Drive</title>
+    </head>
+    <body>
+        <nav class="navbar">
+            <div class="logo"><img src="/logo.png" alt="logo" /></div>
+            <div class="searchbar-container">
+                <div class="searchbar">
+                    <input type="text" placeholder="rechercher ..." />
+                    <div>
+                        <img src="/search-heart.svg" fill="white" alt="" />
+                    </div>
+                </div>
+            </div>
+            <div class="list-container">
+                <img src="/list-ol.svg" alt="cart" />
+                <p>mes listes</p>
+            </div>
+            <div class="cart-container">
+                <img src="/cart-fill.svg" alt="cart" />
+                <p>mon panier</p>
+            </div>
+            <div class="login">
+                <a href="/login"><img src="/person-fill-x.svg" alt="cart" /></a>
+                <p>connexion</p>
+            </div>
+        </nav>
+
+        <div id="App"></div>
+
+        <script type="module" src="/src/app.js"></script>
+    </body>
+</html>

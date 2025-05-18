@@ -1,0 +1,151 @@
+body {
+    font-family: "roboto", sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background-color: white;
+    border-bottom: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.logo {
+    cursor: pointer;
+}
+
+.logo img {
+    height: 60px;
+    width: 120px;
+}
+
+.searchbar-container {
+    width: 40%;
+    margin: 0 2rem;
+}
+
+.searchbar {
+    display: flex;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.searchbar input {
+    flex: 1;
+    padding: 0.6rem;
+    border: none;
+    background: transparent;
+    outline: none;
+}
+
+.searchbar div {
+    padding: 0.6rem 1rem;
+    background-color: #d0021b;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+.searchbar img {
+    height: 20px;
+    width: 20px;
+}
+
+nav > div:nth-of-type(3) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #333;
+}
+
+.cart-container {
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+}
+
+.cart-container img {
+    height: 30px;
+    width: 30px;
+}
+
+.login {
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.list-container img {
+    height: 30px;
+    width: 30px;
+}
+
+.login img {
+    height: 30px;
+    width: 30px;
+}
+
+#App {
+    height: 100%;
+    width: 100%;
+}
+
+.explore,
+.recommandations {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 2rem;
+    background-color: white;
+    margin: 1rem auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    justify-content: center;
+}
+
+@media screen and (max-width: 1016px) {
+    nav {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .searchbar-container {
+        order: 3;
+        flex: 100%;
+        flex-basis: 100%;
+        flex-grow: 1;
+        margin: 1rem 0;
+        width: 100%;
+    }
+
+    nav > div {
+        flex: 1 1 100px;
+        text-align: center;
+    }
+}
+@media screen and (max-width: 565px) {
+    nav > div {
+        flex: 1 1 50px;
+        text-align: center;
+    }
+}
