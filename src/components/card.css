@@ -55,3 +55,65 @@
 .add-to-cart:hover {
   background-color: #a10015;
 }
+
+.quantity-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.7rem 0;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  background: #f9f9f9;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+.quantity-controls button {
+  background: #eee;
+  border: none;
+  padding: 0.3rem 0.7rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.quantity-controls button:hover {
+  background: #ddd;
+}
+
+.quantity-controls .qty {
+  font-weight: bold;
+  min-width: 1.5rem;
+  text-align: center;
+  display: inline-block;
+}
+
+.product-card.unavailable {
+  position: relative;
+  filter: grayscale(0.4);
+  opacity: 1;
+}
+
+.product-card.unavailable::after {
+  content: "Indisponible";
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  background-color: rgba(208, 2, 27, 0.9); /* rouge doux */
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.product-card.unavailable .add-to-cart {
+  background-color: #ddd;
+  cursor: not-allowed;
+  color: #888;
+  pointer-events: none;
+  font-style: italic;
+}

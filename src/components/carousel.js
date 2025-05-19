@@ -1,4 +1,4 @@
-export const carousel = (carouselClass, btnClass, scrollStep = 260) => {
+export const carousel = (carouselClass, btnClass, scrollStep, maxScroll) => {
     const wrapper = document.createElement("div");
     wrapper.className = `carousel ${carouselClass}`;
     wrapper.innerHTML = `
@@ -20,14 +20,10 @@ export const carousel = (carouselClass, btnClass, scrollStep = 260) => {
     });
 
     btnRight.addEventListener("click", () => {
-        const maxScroll = track.scrollWidth - track.offsetWidth;
-
-        scrollAmount = Math.min(
-            scrollAmount + scrollStep,
-            maxScroll + scrollStep
-        );
-        track.style.transform = `translateX(-${scrollAmount}px)`;
+    scrollAmount = Math.min(scrollAmount + scrollStep, maxScroll - scrollStep);
+    track.style.transform = `translateX(-${scrollAmount}px)`;
     });
+
 
     return wrapper;
 };

@@ -1,12 +1,67 @@
-export const card = (name, price, desc, imgRef) => {
-  return `
-    <div class="product-card">
-        <img src="${imgRef}" alt="${name}" />
-        <div class="product-info">
-        <h3>${name}</h3>
-        <p class="price">${price} €</p>
-        <button class="add-to-cart">Ajouter au panier</button>
-        </div>
+export const card = (product) => {
+  const wrapper = document.createElement("div");
+  wrapper.className = "product-card";
+  wrapper.id = product.id;
+
+  let quantity = 1;
+
+  const isUnavailable = product.disponibility === false;
+
+  wrapper.innerHTML = `
+    <img src="${product.image}" alt="${product.name}" />
+    <div class="product-info">
+      <h3>${product.name}</h3>
+      <p class="price">${product.price.toFixed(2)} €</p>
+      <div class="quantity-controls">
+        <button class="decrease">-</button>
+        <span class="qty">1</span>
+        <button class="increase">+</button>
+      </div>
+      <button class="add-to-cart"${isUnavailable ? " disabled" : ""}>
+        ${isUnavailable ? "Indisponible" : "Ajouter au panier"}
+      </button>
     </div>
-    `;
+  `;
+
+  if (isUnavailable) {
+    wrapper.classList.add("unavailable");
+  } else {
+   
+    wrapper.addEventListener("click", () => {
+      window.location.href = `/product/${product.id}`;
+    });
+  }
+
+  const qtyDisplay = wrapper.querySelector(".qty");
+  const decreaseBtn = wrapper.querySelector(".decrease");
+  const increaseBtn = wrapper.querySelector(".increase");
+  const addBtn = wrapper.querySelector(".add-to-cart");
+
+  if (!isUnavailable) {
+    decreaseBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (quantity > 1) {
+        quantity--;
+        qtyDisplay.textContent = quantity;
+      }
+    });
+
+    increaseBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      quantity++;
+      qtyDisplay.textContent = quantity;
+    });
+
+    addBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      console.log(`Produit ajouté : ${product.id}, quantité : ${quantity}`);
+    });
+  } else {
+    
+    wrapper.querySelectorAll("button").forEach((btn) => {
+      btn.setAttribute("disabled", true);
+    });
+  }
+
+  return wrapper;
 };

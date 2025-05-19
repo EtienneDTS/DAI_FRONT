@@ -66,12 +66,22 @@ nav > div:nth-of-type(3) {
 }
 
 .cart-container {
+    cursor: pointer;
     font-weight: bold;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     color: #333;
+    transition: transform 0.15s ease, color 0.2s ease;
+}
+
+.cart-container:hover {
+    transform: scale(1.05);
+  }
+
+.cart-container:active {
+    transform: scale(0.95);
 }
 
 .cart-container img {
@@ -80,19 +90,39 @@ nav > div:nth-of-type(3) {
 }
 
 .login {
+    cursor: pointer;
     font-weight: bold;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    transition: transform 0.15s ease, color 0.2s ease;
+}
+
+.login:hover {
+    transform: scale(1.05);
+  }
+
+.login:active {
+    transform: scale(0.95);
 }
 
 .list-container {
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     font-weight: bold;
+    transition: transform 0.15s ease, color 0.2s ease;
+}
+
+.list-container:hover {
+    transform: scale(1.05);
+  }
+
+.list-container:active {
+    transform: scale(0.95);
 }
 
 .list-container img {
