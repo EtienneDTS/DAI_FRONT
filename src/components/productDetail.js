@@ -41,8 +41,8 @@ export const productDetail = (product) => {
 
   increaseBtn.addEventListener("click", (e) => {
     e.preventDefault();
-  e.stopPropagation();
-  e.stopImmediatePropagation();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
     console.log("ici");
     
     quantity++;

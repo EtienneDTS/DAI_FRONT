@@ -29,7 +29,7 @@ export const cart = (products) => {
       ${products.length > 0 ? `<div class="cart-total">Total : <strong>${total} €</strong></div>` : ""}
     `;
 
-    // Events : Supprimer produit
+
     wrapper.querySelectorAll(".remove-from-cart").forEach(btn => {
       btn.addEventListener("click", () => {
         const id = parseInt(btn.closest(".cart-item").dataset.id);
@@ -41,7 +41,7 @@ export const cart = (products) => {
       });
     });
 
-    // Events : augmenter quantité
+
     wrapper.querySelectorAll(".increase").forEach(btn => {
       btn.addEventListener("click", () => {
         const id = parseInt(btn.closest(".cart-item").dataset.id);
@@ -53,7 +53,7 @@ export const cart = (products) => {
       });
     });
 
-    // Events : diminuer quantité
+    
     wrapper.querySelectorAll(".decrease").forEach(btn => {
       btn.addEventListener("click", () => {
         const id = parseInt(btn.closest(".cart-item").dataset.id);
