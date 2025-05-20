@@ -5,7 +5,7 @@ export const card = (product) => {
 
   let quantity = 1;
 
-  const isUnavailable = product.disponibility === false;
+  const isUnavailable = product.inStock === false;
 
   wrapper.innerHTML = `
     <img src="${product.image}" alt="${product.name}" />

@@ -72,3 +72,16 @@
 .login-form button:active {
     transform: scale(0.98);
 }
+
+.errorMsg {
+  display: none;
+  margin-top: 1rem;
+  color: #d0021b;
+  background-color: #ffe6e9;
+  border: 1px solid #f5c2c7;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.4;
+}

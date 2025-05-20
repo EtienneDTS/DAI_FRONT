@@ -12,21 +12,29 @@ export const productSearch = (term, productTest) => {
   const perPage = 6;
 
   const render = () => {
+
+    const previousStockFilter = wrapper.querySelector("#stockFilter");
+    const stockChecked = previousStockFilter?.checked || false;
+
+
     wrapper.innerHTML = `
       <h2>Résultats pour "${term}"</h2>
       <div class="filters">
-        <label><input type="checkbox" id="promoFilter" /> En promo</label>
         <label><input type="checkbox" id="stockFilter" /> En stock</label>
       </div>
       <div class="product-grid"></div>
       <div class="pagination"></div>
     `;
 
+    const stockFilter = wrapper.querySelector("#stockFilter");
+    stockFilter.checked = stockChecked;
+
+
     let visibleProducts = [...filteredProducts];
-    if (wrapper.querySelector("#promoFilter")?.checked)
-      visibleProducts = visibleProducts.filter((p) => p.promo);
-    if (wrapper.querySelector("#stockFilter")?.checked)
+    if (stockFilter.checked) {
       visibleProducts = visibleProducts.filter((p) => p.inStock);
+    }
+
 
     const totalPages = Math.ceil(visibleProducts.length / perPage);
     const start = (currentPage - 1) * perPage;
@@ -34,7 +42,7 @@ export const productSearch = (term, productTest) => {
 
     const grid = wrapper.querySelector(".product-grid");
     visibleProducts.slice(start, end).forEach((p) => {
-      grid.appendChild(card(p)); // ta fonction `card(product)`
+      grid.appendChild(card(p));
     });
 
     const pagination = wrapper.querySelector(".pagination");
@@ -49,9 +57,7 @@ export const productSearch = (term, productTest) => {
       pagination.appendChild(btn);
     }
 
-    wrapper.querySelectorAll("input[type=checkbox]").forEach((input) => {
-      input.addEventListener("change", render);
-    });
+    stockFilter.addEventListener("change", render);
   };
 
   render();

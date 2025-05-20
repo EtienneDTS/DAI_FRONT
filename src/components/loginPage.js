@@ -1,3 +1,5 @@
+import { loginUser } from "../api";
+
 export const loginPage = () => {
     const wrapper = document.createElement("div");
     wrapper.className = "login-page";
@@ -5,6 +7,7 @@ export const loginPage = () => {
     wrapper.innerHTML = `
       <h2>Connexion</h2>
       <form class="login-form">
+        <span class="errorMsg"></span>
         <label for="email">Email</label>
         <input type="email" id="email" name="email" placeholder="ex: jean@drive.fr" required />
   
@@ -17,10 +20,23 @@ export const loginPage = () => {
 
     const form = wrapper.querySelector(".login-form");
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const email = form.email.value;
         const password = form.password.value;
+        try {
+        const userData = await loginUser(email, password);
+      console.log("Connecté :", userData);
+
+   
+      localStorage.setItem("user", userData);
+      console.log(localStorage, "localStorage")
+      window.location.href = "/";
+    } catch (err) {
+      const errorMsg = document.querySelector(".errorMsg")
+      errorMsg.textContent = "Échec de la connexion.";
+      errorMsg.style.display = "block";
+    }
         console.log("Tentative de connexion :", email, password);
     });
 
