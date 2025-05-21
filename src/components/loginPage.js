@@ -25,18 +25,17 @@ export const loginPage = () => {
         const email = form.email.value;
         const password = form.password.value;
         try {
-        const userData = await loginUser(email, password);
-      console.log("Connecté :", userData);
+            const userData = await loginUser(email, password);
+            console.log("Connecté :", userData);
 
-   
-      localStorage.setItem("user", JSON.stringify(userData));
-      console.log(localStorage, "localStorage")
-      window.location.href = "/";
-    } catch (err) {
-      const errorMsg = document.querySelector(".errorMsg")
-      errorMsg.textContent = "Échec de la connexion.";
-      errorMsg.style.display = "block";
-    }
+            localStorage.setItem("user", JSON.stringify(userData));
+            console.log(localStorage, "localStorage");
+            window.location.href = "/";
+        } catch (err) {
+            const errorMsg = document.querySelector(".errorMsg");
+            errorMsg.textContent = "Échec de la connexion.";
+            errorMsg.style.display = "block";
+        }
         console.log("Tentative de connexion :", email, password);
     });
 
