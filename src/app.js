@@ -310,4 +310,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log(idList, "idList");
         App.appendChild(await notesPage(idList));
     }
+
+    //DASHBOARD
+    else if (path === "/dashboard") {
+       App.innerHTML = `<h1>Dashboard</h1>`;
+    }
 });
