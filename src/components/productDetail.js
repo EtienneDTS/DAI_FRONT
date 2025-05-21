@@ -6,10 +6,10 @@ export const productDetail = (product) => {
 
   wrapper.innerHTML = `
     <div class="product-detail-content">
-      <img src="${product.image}" alt="${product.name}" class="product-detail-image" />
+      <img src="${product.urlImage}" alt="${product.nomP}" class="product-detail-image" />
       <div class="product-detail-info">
-        <h2>${product.name}</h2>
-        <p class="product-price">${product.price.toFixed(2)} €</p>
+        <h2>${product.nomP}</h2>
+        <p class="product-price">${product.prixUnitaireP.toFixed(2)} €</p>
         <p class="product-description">${product.description || "Pas de description disponible."}</p>
         
         <div class="quantity-controls">

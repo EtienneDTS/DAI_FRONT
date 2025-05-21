@@ -9,7 +9,6 @@ export const getProducts = async () => {
         "Content-Type": "application/json",
       }
     });
-    console.log("la")
     if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
     const data = await response.json();
     console.log("data", data)

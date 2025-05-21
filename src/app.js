@@ -6,6 +6,7 @@ import { productDetail } from "./components/productDetail";
 import { productSearch } from "./components/productSearch";
 import { getProducts } from "./api";
 
+let userRole;
 document.addEventListener("DOMContentLoaded", async () => {
 
     let cartProducts = [
@@ -37,8 +38,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const App = document.querySelector("#App");
     const path = window.location.pathname;
     const logo = document.querySelector(".logo");
+    const login = document.querySelector(".login");
+    const loginText = document.querySelector(".login-text")
     const cartIcon = document.querySelector(".cart-container");
-  
+    
     const searchText = document.querySelector(".input-text");
     
     const searchButton = document.querySelector(".search-button")
@@ -54,14 +57,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     logo.addEventListener("click", () => (window.location.href = "/"));
     console.log(path, "path");
+    if (localStorage.getItem("user") !== null) {
+        const user = JSON.parse(localStorage.getItem("user"));
+        loginText.textContent = user.nom;
+        userRole = user.role;
+    } else {
+        login.addEventListener("click", ()=> {window.location.href = "/login"})
+        loginText.textContent = "connexion"
+    }
+    
+    // ROUTES
 
 
     // HOME
     if (path === "/") {
         console.log(localStorage, "localStorage")
-        const productTest = getProducts().then(()=> {
-            console.log(productTest, "icila")
-        });
+        const products = await getProducts()
+        console.log(products, "icila", products.length)
+        
         
         const scrollStep = 250;
         const exploreCarousel = "exploreCarousel";
@@ -79,7 +92,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const explore = document.querySelector(".explore");
         const recommandations = document.querySelector(".recommandations");
-        const maxStep = productTest.length * (scrollStep)
+        const maxStep = products.length * (scrollStep)
         explore.appendChild(carousel(exploreCarousel, exploreBtn, scrollStep, maxStep));
         recommandations.appendChild(
             carousel(recommandationCarousel, recommandationBtn, scrollStep, maxStep)
@@ -92,13 +105,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             `.carousel-track.${recommandationCarousel}`
         );
 
-        productTest.forEach((element) => {
+        products.forEach((element) => {
             exploreTrack.appendChild(card(
                 element
             ));
         });
 
-        productTest.forEach((element) => {
+        products.forEach((element) => {
             recommandationsTrack.appendChild(card(
                 element
             ));

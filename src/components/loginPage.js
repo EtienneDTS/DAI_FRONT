@@ -29,7 +29,7 @@ export const loginPage = () => {
       console.log("Connecté :", userData);
 
    
-      localStorage.setItem("user", userData);
+      localStorage.setItem("user", JSON.stringify(userData));
       console.log(localStorage, "localStorage")
       window.location.href = "/";
     } catch (err) {

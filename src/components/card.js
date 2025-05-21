@@ -8,10 +8,10 @@ export const card = (product) => {
   const isUnavailable = product.inStock === false;
 
   wrapper.innerHTML = `
-    <img src="${product.image}" alt="${product.name}" />
+    <img src="${product.urlImage}" alt="${product.nomP}" />
     <div class="product-info">
-      <h3>${product.name}</h3>
-      <p class="price">${product.price.toFixed(2)} €</p>
+      <h3>${product.nomP}</h3>
+      <p class="price">${product.prixUnitaireP} €</p>
       <div class="quantity-controls">
         <button class="decrease">-</button>
         <span class="qty">1</span>
