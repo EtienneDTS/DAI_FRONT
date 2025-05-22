@@ -1,17 +1,27 @@
 export const productDetail = (product) => {
   const wrapper = document.createElement("div");
   wrapper.className = "product-detail";
-  console.log("ici")
   let quantity = 1;
+
+  const isBio = product.bio ? "Oui" : "Non";
 
   wrapper.innerHTML = `
     <div class="product-detail-content">
-      <img src="${product.urlImage}" alt="${product.nomP}" class="product-detail-image" />
+      <img src="${product.urlImage}" alt="${product.nom}" class="product-detail-image" />
       <div class="product-detail-info">
-        <h2>${product.nomP}</h2>
-        <p class="product-price">${product.prixUnitaireP.toFixed(2)} €</p>
+        <h2>${product.nom}</h2>
+        <p class="product-price">${product.prixUnitaire} €</p>
+        <ul class="product-attributes">
+          <li><strong>Marque :</strong> ${product.marque}</li>
+          <li><strong>Catégorie :</strong> ${product.idCate?.nomCate || "Non spécifiée"}</li>
+          <li><strong>Bio :</strong> ${isBio}</li>
+          <li><strong>NutriScore :</strong> ${product.nutriScore}</li>
+          <li><strong>Poids :</strong> ${product.poid}g</li>
+          <li><strong>Conditionnement :</strong> ${product.conditionnement}</li>
+          <li><strong>Prix au kg :</strong> ${product.prixKg} €/kg</li>
+        </ul>
         <p class="product-description">${product.description || "Pas de description disponible."}</p>
-        
+
         <div class="quantity-controls">
           <button class="decrease-detail">-</button>
           <span class="qty-detail">1</span>
@@ -28,12 +38,10 @@ export const productDetail = (product) => {
   const decreaseBtn = wrapper.querySelector(".decrease-detail");
   const increaseBtn = wrapper.querySelector(".increase-detail");
   const addBtn = wrapper.querySelector(".add-to-cart");
-  console.log({ decreaseBtn, increaseBtn, addBtn, qtyDisplay });
 
   decreaseBtn.addEventListener("click", (e) => {
     e.stopPropagation();
     if (quantity > 1) {
-      
       quantity--;
       qtyDisplay.textContent = quantity;
     }
@@ -41,18 +49,13 @@ export const productDetail = (product) => {
 
   increaseBtn.addEventListener("click", (e) => {
     e.preventDefault();
-    e.stopPropagation();
-    e.stopImmediatePropagation();
-    console.log("ici");
-    
     quantity++;
     qtyDisplay.textContent = quantity;
   });
 
   addBtn.addEventListener("click", (e) => {
     e.stopPropagation();
-    console.log(`Ajout au panier : ${product.name} x${quantity}`);
-    
+    console.log(`Ajout au panier : ${product.nom} x${quantity}`);
   });
 
   return wrapper;

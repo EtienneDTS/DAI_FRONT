@@ -88,3 +88,15 @@
 .product-detail .add-to-cart:hover {
   background: #a10015;
 }
+
+.product-attributes {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.product-attributes li {
+  margin-bottom: 0.4rem;
+}

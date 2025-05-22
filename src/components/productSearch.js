@@ -5,7 +5,7 @@ export const productSearch = (term, productTest) => {
   wrapper.className = "product-search-page";
 
   const filteredProducts = productTest.filter((p) =>
-    p.name.toLowerCase().includes(term)
+    p.nom.toLowerCase().includes(term)
   );
 
   let currentPage = 1;
@@ -32,7 +32,8 @@ export const productSearch = (term, productTest) => {
 
     let visibleProducts = [...filteredProducts];
     if (stockFilter.checked) {
-      visibleProducts = visibleProducts.filter((p) => p.inStock);
+      // voir pour ajouter les dispo dans le produit
+      // visibleProducts = visibleProducts.filter((p) => p.inStock);
     }
 
 
