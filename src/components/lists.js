@@ -35,10 +35,10 @@ export const lists = (lists) => {
                                       .map(
                                           (p) => `
                             <div class="cart-item" data-id="${p.id}">
-                                <img src="${p.image}" alt="${p.name}">
+                                <img src="${p.urlImage}" alt="${p.nom}">
                                 <div class="item-info">
-                                    <h4>${p.name}</h4>
-                                    <p>${p.price.toFixed(2)} €</p>
+                                    <h4>${p.nom}</h4>
+                                    <p>${p.prixUnitaire} €</p>
                                     <div class="quantity-controls">
                                         <button class="decrease">-</button>
                                         <span class="qty">${p.quantity || 1}</span>
@@ -75,8 +75,9 @@ export const lists = (lists) => {
     wrapper.querySelector(".add-list-form").addEventListener("submit", async (e) => {
         e.preventDefault();
         const input = wrapper.querySelector(".new-list-name");
+        
         const idU = JSON.parse(localStorage.getItem("user")).id
-        await addList(input, idU)
+        await addList(idU, input.value)
         input.value = "";
 
         wrapper.querySelector(".add-list-form").classList.add("hidden");

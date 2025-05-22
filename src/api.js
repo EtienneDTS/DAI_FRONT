@@ -77,13 +77,14 @@ export const getLists = async (idUser) => {
 };
 
 export const addList = async (idUser, nameList) => {
+  console.log(idUser, nameList)
     try {
         const response = await fetch(`${BASEURL}/listes`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ nomL: nameList, idUtiliateur: idUser }),
+            body: JSON.stringify({ noml: nameList, idUtilisateur: parseInt(idUser) }),
         });
         if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
         
