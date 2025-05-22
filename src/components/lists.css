@@ -70,7 +70,8 @@
     font-size: 0.9rem;
 }
 
-.remove-from-list {
+.remove-from-list,
+.remove-from-list-cart {
     background: transparent;
     border: none;
     font-size: 1.3rem;
@@ -79,7 +80,8 @@
     transition: color 0.2s ease;
 }
 
-.remove-from-list:hover {
+.remove-from-list:hover,
+.remove-from-list-cart:hover {
     color: #d0021b;
 }
 
@@ -218,7 +220,7 @@
     color: white;
     border: none;
     padding: 0.6rem;
-    margin: 0.4rem; 
+    margin: 0.4rem;
     margin-bottom: 40px;
     border-radius: 4px;
     cursor: pointer;
@@ -252,7 +254,6 @@
     color: white;
     border: none;
     padding: 0.5rem;
-  
     border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
@@ -265,4 +266,19 @@
 
 .hidden {
     display: none;
+}
+
+.notes-btn {
+    background-color: #d0021b;
+    color: white;
+    border: none;
+    padding: 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s ease;
+}
+
+.notes-btn:hover {
+    background-color: #a10015;
 }

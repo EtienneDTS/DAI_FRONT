@@ -1,12 +1,18 @@
-import { addList, getLists } from "../api";
+import {
+    addList,
+    getLists,
+    deleteList,
+    modifyList,
+    deleteProductFromList,
+} from "../api";
+import { resetList } from "../utils";
 
 export const lists = (lists) => {
-    
     const wrapper = document.createElement("div");
     wrapper.className = "lists-page";
 
     function renderLists() {
-    wrapper.innerHTML = `
+        wrapper.innerHTML = `
         <h2>Mes listes</h2>
         <button class="add-list">Ajouter une liste</button>
         <form class="add-list-form hidden">
@@ -34,18 +40,24 @@ export const lists = (lists) => {
                                 ? l.produits
                                       .map(
                                           (p) => `
-                            <div class="cart-item" data-id="${p.id}">
-                                <img src="${p.urlImage}" alt="${p.nom}">
+                            <div class="cart-item" data-id="${p.produit.id}">
+                                <img src="${p.produit.urlImage}" alt="${
+                                              p.produit.nom
+                                          }">
                                 <div class="item-info">
-                                    <h4>${p.nom}</h4>
-                                    <p>${p.prixUnitaire} €</p>
+                                    <h4>${p.produit.nom}</h4>
+                                    <p>${p.produit.prixUnitaire} €</p>
                                     <div class="quantity-controls">
                                         <button class="decrease">-</button>
-                                        <span class="qty">${p.quantity || 1}</span>
+                                        <span class="qty">${
+                                            p.quantite || 1
+                                        }</span>
                                         <button class="increase">+</button>
                                     </div>
                                 </div>
-                                <button class="remove-from-cart">✕</button>
+                                <button class="remove-from-list-cart" id="btn${
+                                    p.produit.id
+                                }">✕</button>
                             </div>
                         `
                                       )
@@ -57,6 +69,7 @@ export const lists = (lists) => {
                                 ? `<button class="add-list-to-cart">Ajouter ma liste au panier</button>`
                                 : ""
                         }
+                        <button class="notes-btn">Notes</button>
                     </div>
                 </div>
             `
@@ -66,32 +79,87 @@ export const lists = (lists) => {
         </div>
     `;
 
-    // Toggle formulaire
-    wrapper.querySelector(".add-list").addEventListener("click", () => {
-        wrapper.querySelector(".add-list-form").classList.toggle("hidden");
-    });
+        // Toggle formulaire
+        wrapper.querySelector(".add-list").addEventListener("click", () => {
+            wrapper.querySelector(".add-list-form").classList.toggle("hidden");
+        });
 
-    // Soumission du formulaire
-    wrapper.querySelector(".add-list-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const input = wrapper.querySelector(".new-list-name");
-        
-        const idU = JSON.parse(localStorage.getItem("user")).id
-        await addList(idU, input.value)
-        input.value = "";
+        // Soumission du formulaire
+        wrapper
+            .querySelector(".add-list-form")
+            .addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const input = wrapper.querySelector(".new-list-name");
 
-        wrapper.querySelector(".add-list-form").classList.add("hidden");
-        lists = await getLists(idU);
-        renderLists();
-    });
+                const idU = JSON.parse(localStorage.getItem("user")).utilisateur
+                    .id;
+                await addList(idU, input.value);
+                input.value = "";
+
+                wrapper.querySelector(".add-list-form").classList.add("hidden");
+                lists = await getLists(idU);
+                document.querySelectorAll(".list-choices").forEach((ul) => {
+                    ul.innerHTML = "";
+
+                    lists.forEach((list) => {
+                        console.log(list, "liist");
+                        const li = document.createElement("li");
+                        li.textContent = list.noml;
+                        li.dataset.id = list.id;
+
+                        li.addEventListener("click", (e) => {
+                            e.stopPropagation();
+                            console.log(
+                                `Ajout à la liste ${list.nom} (id: ${list.id})`
+                            );
+                            ul.closest(".add-to-list-overlay").classList.remove(
+                                "show"
+                            );
+                        });
+
+                        ul.appendChild(li);
+                    });
+                });
+                renderLists();
+            });
 
         wrapper.querySelectorAll(".remove-from-list").forEach((btn) => {
-            btn.addEventListener("click", () => {
+            btn.addEventListener("click", async () => {
                 const id = parseInt(btn.closest(".list-item").dataset.id);
                 const index = lists.findIndex((l) => l.id === id);
-                if (index !== -1) {
-                    lists.splice(index, 1);
-                    renderLists();
+                try {
+                    await deleteList(id);
+                    if (index !== -1) {
+                        lists.splice(index, 1);
+                        renderLists();
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        wrapper.querySelectorAll(".remove-from-list-cart").forEach((btn) => {
+            btn.addEventListener("click", async () => {
+                const listId = parseInt(btn.closest(".list-item").dataset.id);
+                const productId = parseInt(
+                    btn.closest(".cart-item").dataset.id
+                );
+
+                try {
+                    await deleteProductFromList(listId, productId);
+                    const list = lists.find((l) => l.id === listId);
+                    if (list) {
+                        list.produits = list.produits.filter(
+                            (p) => p.produit.id !== productId
+                        );
+                        renderLists();
+                    }
+                } catch (error) {
+                    console.log(
+                        "Erreur suppression produit dans liste :",
+                        error
+                    );
                 }
             });
         });
@@ -104,32 +172,47 @@ export const lists = (lists) => {
             });
         });
 
-        wrapper.querySelectorAll(".increase").forEach((btn) => {
+        wrapper.querySelectorAll(".notes-btn").forEach((btn) => {
             btn.addEventListener("click", () => {
-                const id = parseInt(btn.closest(".cart-item").dataset.id);
-                const product = products.find((p) => p.id === id);
-                if (product) {
-                    product.quantity = (product.quantity || 1) + 1;
-                    renderCart();
-                }
+                const listId = parseInt(btn.closest(".list-item")?.dataset.id);
+                window.location.href = `/notes/${listId}`;
+            });
+        });
+
+        wrapper.querySelectorAll(".increase").forEach((btn) => {
+            btn.addEventListener("click", async () => {
+                const cartItem = btn.closest(".cart-item");
+                const idProduct = parseInt(cartItem.dataset.id);
+                const listId = parseInt(btn.closest(".list-item")?.dataset.id);
+
+                const qtySpan = cartItem.querySelector(".qty");
+                let currentQty = parseInt(qtySpan.textContent) || 1;
+
+                currentQty++;
+                qtySpan.textContent = currentQty;
+
+                await modifyList(listId, idProduct, currentQty);
             });
         });
 
         wrapper.querySelectorAll(".decrease").forEach((btn) => {
-            btn.addEventListener("click", () => {
-                const id = parseInt(btn.closest(".cart-item").dataset.id);
-                const product = products.find((p) => p.id === id);
-                if (product && product.quantity > 1) {
-                    product.quantity--;
-                    renderCart();
-                }
+            btn.addEventListener("click", async () => {
+                const cartItem = btn.closest(".cart-item");
+                const idProduct = parseInt(cartItem.dataset.id);
+                const listId = parseInt(btn.closest(".list-item")?.dataset.id);
+
+                const qtySpan = cartItem.querySelector(".qty");
+                let currentQty = parseInt(qtySpan.textContent) || 1;
+
+                currentQty--;
+                qtySpan.textContent = currentQty;
+
+                await modifyList(listId, idProduct, currentQty);
             });
         });
     }
 
-
-
     renderLists();
-    
+
     return wrapper;
 };

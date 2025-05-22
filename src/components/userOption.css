@@ -1,0 +1,47 @@
+.user-menu {
+    position: fixed;
+    top: 130px;
+    right: 20px;
+    background: white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 1rem;
+    width: 220px;
+    z-index: 1000;
+    transition: all 0.2s ease;
+    display: none;
+}
+
+.user-menu.show {
+    display: block;
+}
+
+.user-menu .user-info {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.user-actions {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.user-actions button {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 0.95rem;
+    border: none;
+    border-radius: 6px;
+    background: #f3f3f3;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.user-actions button:hover {
+    background: #ddd;
+}
