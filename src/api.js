@@ -198,7 +198,7 @@ export const getOneList = async (idList) => {
 
 export const createPostit = async (idList) => {
     try {
-        const response = await fetch(`${BASEURL}/listes/${idList}/postit`, {
+        const response = await fetch(`${BASEURL}/listes/${idList}/postits`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -213,7 +213,7 @@ export const createPostit = async (idList) => {
 
 export const modifyPostit = async (idPostit, text) => {
     try {
-        const response = await fetch(`${BASEURL}/listes/${idPostit}/postit`, {
+        const response = await fetch(`${BASEURL}/listes/${idPostit}/postits`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
