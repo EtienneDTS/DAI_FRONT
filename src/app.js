@@ -65,6 +65,11 @@ const recommandationsProduct = [
         disponibility: false,
     },
 ];
+import { getProducts } from "./api";
+import { stockDashboard } from "./components/stockDashboard.js";
+import { getStockPrevision } from "./apis/getStockPrevision";
+import { managerDashboard } from "./components/managerDashboard";
+
 
 let userRole;
 document.addEventListener("DOMContentLoaded", async () => {
@@ -311,8 +316,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         App.appendChild(await notesPage(idList));
     }
 
-    //DASHBOARD
-    else if (path === "/dashboard") {
-       App.innerHTML = `<h1>Dashboard</h1>`;
-    }
+else if (path === "/dashboard") {
+    App.innerHTML = "";
+    App.appendChild(await managerDashboard());
+}
+
+
+
+
 });

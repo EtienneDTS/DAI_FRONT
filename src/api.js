@@ -244,3 +244,11 @@ export const deletePostit = async (idPostit) => {
         return [];
     }
 };
+
+export async function getCategories() {
+  const response = await fetch("http://localhost:8081/categories");
+  if (!response.ok) {
+    throw new Error("Erreur de récupération des catégories");
+  }
+  return await response.json(); // ex: ["Fruits", "Épicerie", "Crèmerie"]
+}
