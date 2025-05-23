@@ -8,152 +8,17 @@ import { productSearch } from "./components/productSearch";
 import { getProducts, getOneProduct, getLists } from "./api";
 import { userOption } from "./components/userOption";
 import { notesPage } from "./components/notesPage";
-
+import { resetCart, resetList, resetListNames } from "./utils";
 import { managerDashboard } from "./components/managerDashboard";
 
 
-const recommandationsProduct = [
-    {
-        id: 1,
-        name: "Bananes bio",
-        price: 1.99,
-        description: "",
-        image: "https://media.carrefour.fr/medias/eac51db226553234ba8990ed218556a5/p_1500x1500/3523680438224-0.jpg",
-        category: "Fruits",
-        inStock: true,
-        promo: false,
-        disponibility: true,
-    },
-    {
-        id: 2,
-        name: "Lait demi-écrémé 1L",
-        price: 0.89,
-        description: "",
-        image: "https://media.carrefour.fr/medias/793f987022d5461eb216d30fb8ee9cab/p_1500x1500/03533631574000_H1L1_s02.jpeg",
-        category: "Crèmerie",
-        inStock: true,
-        promo: true,
-        disponibility: true,
-    },
-    {
-        id: 3,
-        name: "Yaourt nature x4",
-        price: 1.45,
-        image: "https://medias.reussir.fr/lesmarches/styles/normal_size/azblob/2023-06/lq9837107c__lmh377_medi_danone_niv3.jpeg.webp?itok=_9ocAcUh",
-        category: "Crèmerie",
-        inStock: false,
-        promo: false,
-        disponibility: true,
-    },
-    {
-        id: 4,
-        name: "Pâtes torsadées 500g",
-        price: 1.1,
-        description: "",
-        image: "https://strasbourg.lecodrive.daybyday-shop.com/wp-content/uploads/2021/11/60999-torsades-qualite-superieur.jpg",
-        category: "Épicerie",
-        inStock: true,
-        promo: false,
-        disponibility: true,
-    },
-    {
-        id: 5,
-        name: "Jambon supérieur x4",
-        price: 2.99,
-        description: "",
-        image: "https://images.openfoodfacts.org/images/products/325/622/463/2047/front_fr.47.400.jpg",
-        category: "Charcuterie",
-        inStock: true,
-        promo: true,
-        disponibility: false,
-    },
-];
+
 
 let userRole;
 document.addEventListener("DOMContentLoaded", async () => {
-    let cartProducts = [
-        {
-            id: 1,
-            name: "Bananes bio",
-            price: 1.99,
-            image: "https://media.carrefour.fr/medias/eac51db226553234ba8990ed218556a5/p_1500x1500/3523680438224-0.jpg",
-            quantity: 3,
-        },
-        {
-            id: 2,
-            name: "Lait demi-écrémé 1L",
-            price: 0.89,
-            image: "https://media.carrefour.fr/medias/793f987022d5461eb216d30fb8ee9cab/p_1500x1500/03533631574000_H1L1_s02.jpeg",
-            quantity: 2,
-        },
-        {
-            id: 5,
-            name: "Jambon supérieur x4",
-            price: 2.99,
-            image: "https://images.openfoodfacts.org/images/products/325/622/463/2047/front_fr.47.400.jpg",
-            quantity: 1,
-        },
-    ];
-
-    const recommandationsProduct = [
-        {
-            id: 1,
-            name: "Bananes bio",
-            price: 1.99,
-            description: "",
-            image: "https://media.carrefour.fr/medias/eac51db226553234ba8990ed218556a5/p_1500x1500/3523680438224-0.jpg",
-            category: "Fruits",
-            inStock: true,
-            promo: false,
-            disponibility: true,
-        },
-        {
-            id: 2,
-            name: "Lait demi-écrémé 1L",
-            price: 0.89,
-            description: "",
-            image: "https://media.carrefour.fr/medias/793f987022d5461eb216d30fb8ee9cab/p_1500x1500/03533631574000_H1L1_s02.jpeg",
-            category: "Crèmerie",
-            inStock: true,
-            promo: true,
-            disponibility: true,
-        },
-        {
-            id: 3,
-            name: "Yaourt nature x4",
-            price: 1.45,
-            image: "https://medias.reussir.fr/lesmarches/styles/normal_size/azblob/2023-06/lq9837107c__lmh377_medi_danone_niv3.jpeg.webp?itok=_9ocAcUh",
-            category: "Crèmerie",
-            inStock: false,
-            promo: false,
-            disponibility: true,
-        },
-        {
-            id: 4,
-            name: "Pâtes torsadées 500g",
-            price: 1.1,
-            description: "",
-            image: "https://strasbourg.lecodrive.daybyday-shop.com/wp-content/uploads/2021/11/60999-torsades-qualite-superieur.jpg",
-            category: "Épicerie",
-            inStock: true,
-            promo: false,
-            disponibility: true,
-        },
-        {
-            id: 5,
-            name: "Jambon supérieur x4",
-            price: 2.99,
-            description: "",
-            image: "https://images.openfoodfacts.org/images/products/325/622/463/2047/front_fr.47.400.jpg",
-            category: "Charcuterie",
-            inStock: true,
-            promo: true,
-            disponibility: false,
-        },
-    ];
+    
 
     const body = document.querySelector("body");
-
     const App = document.querySelector("#App");
     const path = window.location.pathname;
     const logo = document.querySelector(".logo");
@@ -169,8 +34,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.location.href = `/search/${searchText.value}`;
     });
 
-    body.appendChild(cart(cartProducts));
+    
     let listwrapper = lists([]);
+    const cartWrapper = cart([]);
+    body.appendChild(cartWrapper);
     body.appendChild(listwrapper);
     const cartPage = document.querySelector(".cart-page");
     let listPage = document.querySelector(".lists-page");
@@ -193,9 +60,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
         document.querySelector("#loginIMG").src = "/person-fill-check.svg";
         const allList = await getLists(user.id);
+ 
+  
         const listData = allList.map((l) => ({ nom: l.noml, id: l.id }));
         localStorage.setItem("lists", JSON.stringify(listData));
-        listwrapper.replaceWith(lists(allList));
+        resetCart()
+        resetList()
         listPage = document.querySelector(".lists-page");
     } else {
         login.addEventListener("click", () => {
@@ -211,7 +81,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (path === "/") {
         console.log(localStorage, "localStorage");
         const products = await getProducts();
-
         const scrollStep = 250;
         const exploreCarousel = "exploreCarousel";
         const exploreBtn = "expoloreBtn";
@@ -255,6 +124,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         products.forEach((element) => {
             recommandationsTrack.appendChild(card(element));
         });
+        resetListNames();
     }
 
     //LOGIN
@@ -303,7 +173,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     // SEARCH
     else if (path.startsWith("/search")) {
         const productName = (path.split("/")[2] || "").toLowerCase();
-        console.log(productName, "productName");
         const products = await getProducts();
         App.appendChild(productSearch(productName, products));
     }
@@ -311,7 +180,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     // NOTES
     else if (path.startsWith("/notes")) {
         const idList = path.split("/")[2] || "";
-        console.log(idList, "idList");
         App.appendChild(await notesPage(idList));
     }
 

@@ -1,5 +1,5 @@
-import { addProductToList, getLists } from "../api";
-import { resetList } from "../utils";
+import {  addProductToCart } from "../api";
+import { resetListNames } from "../utils";
 
 export const card = (product) => {
     const wrapper = document.createElement("div");
@@ -69,6 +69,9 @@ export const card = (product) => {
 
         addBtn.addEventListener("click", (e) => {
             e.stopPropagation();
+            addProductToCart()
+
+            
             console.log(
                 `Produit ajouté : ${product.id}, quantité : ${quantity}`
             );
@@ -81,22 +84,9 @@ export const card = (product) => {
 
     const heartIcon = wrapper.querySelector(".card-favorite-icon");
     const overlay = wrapper.querySelector(".add-to-list-overlay");
-    const listContainer = overlay.querySelector(".list-choices");
+    
 
-    listsStored.forEach((list) => {
-        console.log(list);
-        const li = document.createElement("li");
-        li.textContent = list.nom;
-        li.dataset.id = list.id;
-        li.addEventListener("click", async (e) => {
-            e.stopPropagation();
-            await addProductToList(list.id, product.id, quantity);
-            resetList();
-
-            overlay.classList.remove("show");
-        });
-        listContainer.appendChild(li);
-    });
+    
 
     heartIcon?.addEventListener("click", (e) => {
         e.stopPropagation();

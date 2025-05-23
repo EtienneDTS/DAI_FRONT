@@ -5,6 +5,7 @@ import {
     modifyList,
     deleteProductFromList,
 } from "../api";
+import { resetListNames } from "../utils";
 
 
 export const lists = (lists) => {
@@ -90,7 +91,6 @@ export const lists = (lists) => {
             .addEventListener("submit", async (e) => {
                 e.preventDefault();
                 const input = wrapper.querySelector(".new-list-name");
-
                 const idU = JSON.parse(localStorage.getItem("user"))
                     .id;
                 await addList(idU, input.value);
@@ -98,28 +98,8 @@ export const lists = (lists) => {
 
                 wrapper.querySelector(".add-list-form").classList.add("hidden");
                 lists = await getLists(idU);
-                document.querySelectorAll(".list-choices").forEach((ul) => {
-                    ul.innerHTML = "";
-
-                    lists.forEach((list) => {
-                        console.log(list, "liist");
-                        const li = document.createElement("li");
-                        li.textContent = list.noml;
-                        li.dataset.id = list.id;
-
-                        li.addEventListener("click", (e) => {
-                            e.stopPropagation();
-                            console.log(
-                                `Ajout à la liste ${list.nom} (id: ${list.id})`
-                            );
-                            ul.closest(".add-to-list-overlay").classList.remove(
-                                "show"
-                            );
-                        });
-
-                        ul.appendChild(li);
-                    });
-                });
+                
+                resetListNames()
                 renderLists();
             });
 
@@ -130,8 +110,11 @@ export const lists = (lists) => {
                 try {
                     await deleteList(id);
                     if (index !== -1) {
+                        console.log("la")
                         lists.splice(index, 1);
+                        resetListNames()
                         renderLists();
+                        
                     }
                 } catch (error) {
                     console.log(error);

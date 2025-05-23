@@ -119,6 +119,7 @@ export const addProductToList = async (idList, idProduit, quantity) => {
 };
 
 export const deleteList = async (idList) => {
+    console.log(idList, "idList")
     try {
         const response = await fetch(`${BASEURL}/listes/${idList}`, {
             method: "DELETE",
@@ -127,9 +128,7 @@ export const deleteList = async (idList) => {
             },
         });
         if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
-        const data = await response.json();
-        console.log("data", data);
-        return data ? data : {};
+        
     } catch (err) {
         console.error("Erreur lors du fetch du produit :", err);
         return [];
@@ -240,7 +239,7 @@ export const deletePostit = async (idPostit) => {
         console.log("data", data);
         return data ? data : {};
     } catch (err) {
-        console.error("Erreur lors du fetch du produit :", err);
+        console.error("Erreur lors du fetch du postit :", err);
         return [];
     }
 };
@@ -252,3 +251,82 @@ export async function getCategories() {
   }
   return await response.json(); 
 }
+
+export const getCart = async (idUser) => {
+    try {
+        const response = await fetch(
+            `${BASEURL}/panier/utilisateur/${idUser}`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
+        const data = await response.json();
+        return data ? data : {};
+    } catch (err) {
+        console.error("Erreur lors du fetch du produit :", err);
+        return [];
+    }
+};
+
+export const modifyCartProduct = async (idCart, idProduct, quantity) => {
+    try {
+        const response = await fetch(`${BASEURL}/panier/modifier-quantite`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ idPanier: idCart, idProduit: idProduct, nouvelleQuantite: quantity }),
+        });
+
+        if (!response.ok) {
+            throw new Error("erreur lors de la modification du produit");
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (err) {
+        console.error("Erreur de login :", err);
+        throw err;
+    }
+};
+
+export const deleteProductFromCart = async (idCart, idProduct) => {
+    console.log(idCart, idProduct, "on est la ")
+    try {
+        const response = await fetch(`${BASEURL}/panier/supprimer-produit-entier`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ idPanier: idCart, idProduit: idProduct }),
+        });
+        if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
+    } catch (err) {
+        console.error("Erreur lors du fetch du postit :", err);
+        return [];
+    }
+};
+
+
+export const addProductToCart = async (idUser, idProduit, quantity) => {
+    try {
+        const response = await fetch(
+            `${BASEURL}/panier/${idUser}/produits/${idProduit}?quantite=${quantity}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ quantite: quantity }),
+            }
+        );
+        if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
+    } catch (err) {
+        console.error("Erreur lors du fetch du produit :", err);
+        return [];
+    }
+};
