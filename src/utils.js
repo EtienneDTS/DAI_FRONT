@@ -4,7 +4,7 @@ import { lists } from "./components/lists";
 export const resetList = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
     console.log(user);
-    const userId = user?.utilisateur?.id;
+    const userId = user?.id;
     const listData = await getLists(userId);
     let listPage = document.querySelector(".lists-page");
     listPage.replaceWith(lists(listData));

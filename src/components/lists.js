@@ -5,7 +5,7 @@ import {
     modifyList,
     deleteProductFromList,
 } from "../api";
-import { resetList } from "../utils";
+
 
 export const lists = (lists) => {
     const wrapper = document.createElement("div");
@@ -91,7 +91,7 @@ export const lists = (lists) => {
                 e.preventDefault();
                 const input = wrapper.querySelector(".new-list-name");
 
-                const idU = JSON.parse(localStorage.getItem("user")).utilisateur
+                const idU = JSON.parse(localStorage.getItem("user"))
                     .id;
                 await addList(idU, input.value);
                 input.value = "";

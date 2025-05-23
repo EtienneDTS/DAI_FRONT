@@ -9,6 +9,9 @@ import { getProducts, getOneProduct, getLists } from "./api";
 import { userOption } from "./components/userOption";
 import { notesPage } from "./components/notesPage";
 
+import { managerDashboard } from "./components/managerDashboard";
+
+
 const recommandationsProduct = [
     {
         id: 1,
@@ -179,8 +182,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     logo.addEventListener("click", () => (window.location.href = "/"));
     if (localStorage.getItem("user") !== null) {
-        const user = JSON.parse(localStorage.getItem("user")).utilisateur;
-        console.log(user);
+        
+        const user = JSON.parse(localStorage.getItem("user"));
+        
         loginText.textContent = user.nom;
         userRole = user.role;
         body.appendChild(userOption(user));
@@ -297,7 +301,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // SEARCH
-    if (path.startsWith("/search")) {
+    else if (path.startsWith("/search")) {
         const productName = (path.split("/")[2] || "").toLowerCase();
         console.log(productName, "productName");
         const products = await getProducts();
@@ -305,9 +309,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // NOTES
-    if (path.startsWith("/notes")) {
+    else if (path.startsWith("/notes")) {
         const idList = path.split("/")[2] || "";
         console.log(idList, "idList");
         App.appendChild(await notesPage(idList));
+    }
+
+    //DASHBOARD
+    else if (path === "/dashboard") {
+    App.innerHTML = "";
+    App.appendChild(await managerDashboard());
     }
 });
