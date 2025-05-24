@@ -1,5 +1,7 @@
 import { getStockPrevision } from "../apis/getStokPrevision";
 import { stockDashboard } from "./stockDashboard";
+import { getUserAgeStats } from "../api.js";
+
 
 // Tu peux simuler d'autres données ici
 const topVentesMock = [
@@ -53,8 +55,8 @@ export async function managerDashboard() {
     const parsed = JSON.parse(text);
 
     const champsRequis = [
-      "nomP", "prixUnitaireP", "prixKgP", "poidP",
-      "nutriP", "conditionnementP", "bioP", "marqueP", "urlImage"
+      "nomP", "prixUnitaireP", "prixKgP", "poidsP",
+      "nutriP", "conditionnementP", "bioP", "marqueP", "urlImage", "idR", "idCate"
     ];
 
     const validerProduit = (prod, index = null) => {
@@ -65,20 +67,30 @@ export async function managerDashboard() {
       }
     };
 
-    // Cas 1 : tableau de produits
-    if (Array.isArray(parsed)) {
-      parsed.forEach((prod, i) => validerProduit(prod, i));
-      alert(`${parsed.length} produits valides`);
-    }
-
-    // Cas 2 : un seul produit
-    else if (typeof parsed === "object" && parsed.nomP) {
+    // Cas : un seul produit
+    if (typeof parsed === "object" && parsed.nomP) {
       validerProduit(parsed);
-      alert(`Produit valide : ${parsed.nomP}`);
+
+      // ✅ Envoi au backend
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("http://localhost:8081/api/produits/upload-json", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error("Erreur serveur : " + errorText);
+      }
+
+      const produitCree = await response.json();
+      alert(`✅ Produit créé : ${produitCree.nomP}`);
     }
 
     else {
-      throw new Error("Format JSON non reconnu (objet ou tableau requis)");
+      throw new Error("Format JSON non reconnu (un seul produit attendu)");
     }
 
   } catch (err) {
@@ -86,6 +98,7 @@ export async function managerDashboard() {
     console.error(err);
   }
 });
+
 
 
   uploadBox.appendChild(uploadLabel);
@@ -119,45 +132,43 @@ export async function managerDashboard() {
 
   container.appendChild(chartSection);
 
-  setTimeout(() => {
-    const ctx = document.getElementById("ageChart").getContext("2d");
-    new Chart(ctx, {
-  type: "pie", // ✅ Type changé en pie
-  data: {
-    labels: ["18-25", "26-35", "36-45", "46-60", "60+"],
-    datasets: [{
-      label: "Répartition",
-      data: [25, 40, 20, 10, 5],
-      backgroundColor: [
-        "#4e73df",
-        "#1cc88a",
-        "#36b9cc",
-        "#f6c23e",
-        "#e74a3b"
-      ],
-      borderWidth: 1
-    }]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "right"
-      },
-      tooltip: {
-        callbacks: {
-          label: function(context) {
-            const label = context.label || '';
-            const value = context.formattedValue || '';
-            return `${label}: ${value} %`;
+  getUserAgeStats().then(data => {
+  const labels = Object.keys(data);
+  const values = Object.values(data);
+
+  const ctx = document.getElementById("ageChart").getContext("2d");
+  new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Répartition",
+        data: values,
+        backgroundColor: [
+          "#4e73df", "#1cc88a", "#36b9cc", "#f6c23e", "#e74a3b"
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: "right" },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const label = context.label || '';
+              const value = context.formattedValue || '';
+              return `${label}: ${value} personnes`;
+            }
           }
         }
       }
     }
-  }
+  });
+}).catch(err => {
+  console.error("Erreur graphique :", err);
 });
-
-  }); // ← Fin du setTimeout
 
   return container; // ← Fin de managerDashboard
 }

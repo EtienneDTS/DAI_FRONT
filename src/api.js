@@ -335,3 +335,15 @@ export const addProductToCart = async (idUser, idProduit, quantity) => {
         return [];
     }
 };
+
+export async function getUserAgeStats() {
+  const response = await fetch("http://localhost:8081/utilisateurs/ages", {
+    credentials: "include", // si tu utilises l'authentification
+  });
+
+  if (!response.ok) {
+    throw new Error("Erreur lors de la récupération des stats d'âge");
+  }
+
+  return await response.json();
+}
