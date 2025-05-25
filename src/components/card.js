@@ -1,12 +1,10 @@
-import {  addProductToCart } from "../api";
+import { addProductToCart } from "../api";
 import { resetListNames } from "../utils";
 
 export const card = (product) => {
     const wrapper = document.createElement("div");
     wrapper.className = "product-card";
     wrapper.id = product.id;
-
-    const listsStored = JSON.parse(localStorage.getItem("lists") || "[]");
     let quantity = 1;
     const isUnavailable = product.inStock === false;
 
@@ -69,9 +67,10 @@ export const card = (product) => {
 
         addBtn.addEventListener("click", (e) => {
             e.stopPropagation();
-            addProductToCart()
+            const idUser = JSON.parse(localStorage.getItem("user")).id;
 
-            
+            addProductToCart(idUser, product.id, qtyDisplay.textContent);
+
             console.log(
                 `Produit ajouté : ${product.id}, quantité : ${quantity}`
             );
@@ -84,9 +83,6 @@ export const card = (product) => {
 
     const heartIcon = wrapper.querySelector(".card-favorite-icon");
     const overlay = wrapper.querySelector(".add-to-list-overlay");
-    
-
-    
 
     heartIcon?.addEventListener("click", (e) => {
         e.stopPropagation();

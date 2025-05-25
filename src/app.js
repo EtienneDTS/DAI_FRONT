@@ -10,14 +10,10 @@ import { userOption } from "./components/userOption";
 import { notesPage } from "./components/notesPage";
 import { resetCart, resetList, resetListNames } from "./utils";
 import { managerDashboard } from "./components/managerDashboard";
-
-
-
+import { OrderPage } from "./components/orderPage";
 
 let userRole;
 document.addEventListener("DOMContentLoaded", async () => {
-    
-
     const body = document.querySelector("body");
     const App = document.querySelector("#App");
     const path = window.location.pathname;
@@ -34,7 +30,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.location.href = `/search/${searchText.value}`;
     });
 
-    
     let listwrapper = lists([]);
     const cartWrapper = cart([]);
     body.appendChild(cartWrapper);
@@ -49,9 +44,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     logo.addEventListener("click", () => (window.location.href = "/"));
     if (localStorage.getItem("user") !== null) {
-        
         const user = JSON.parse(localStorage.getItem("user"));
-        
+        console.log(user, "user");
         loginText.textContent = user.nom;
         userRole = user.role;
         body.appendChild(userOption(user));
@@ -60,14 +54,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
         document.querySelector("#loginIMG").src = "/person-fill-check.svg";
         const allList = await getLists(user.id);
- 
-  
+
         const listData = allList.map((l) => ({ nom: l.noml, id: l.id }));
         localStorage.setItem("lists", JSON.stringify(listData));
-        resetCart()
-        resetList()
+        resetCart();
+        resetList();
         listPage = document.querySelector(".lists-page");
     } else {
+        console.log("ici");
         login.addEventListener("click", () => {
             window.location.href = "/login";
         });
@@ -79,7 +73,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // HOME
     if (path === "/") {
-        console.log(localStorage, "localStorage");
         const products = await getProducts();
         const scrollStep = 250;
         const exploreCarousel = "exploreCarousel";
@@ -177,7 +170,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         App.appendChild(productSearch(productName, products));
     }
 
-    // NOTES
+    // POSTITS (NOTE)
     else if (path.startsWith("/notes")) {
         const idList = path.split("/")[2] || "";
         App.appendChild(await notesPage(idList));
@@ -185,7 +178,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     //DASHBOARD
     else if (path === "/dashboard") {
-    App.innerHTML = "";
-    App.appendChild(await managerDashboard());
+        App.innerHTML = "";
+        App.appendChild(await managerDashboard());
+    }
+
+    //ORDERS
+    else if (path === "/orders") {
+        App.innerHTML = "";
+        App.appendChild(await OrderPage());
     }
 });

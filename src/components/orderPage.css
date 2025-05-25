@@ -1,0 +1,49 @@
+.order-management-page {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+    font-family: system-ui, sans-serif;
+}
+
+.order-management-page h2 {
+    font-size: 1.6rem;
+    margin-bottom: 1.5rem;
+    color: #d0021b;
+    font-weight: 600;
+}
+
+.order-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.order-tab {
+    padding: 0.6rem 1.2rem;
+    border-radius: 30px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    font-weight: 500;
+    color: #333;
+    transition: background-color 0.2s ease;
+}
+
+.order-tab.active {
+    background-color: #d0021b;
+    color: white;
+    border-color: #d0021b;
+}
+
+.order-tab:hover:not(.active) {
+    background-color: #eee;
+}
+
+.order-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}

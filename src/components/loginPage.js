@@ -26,9 +26,8 @@ export const loginPage = () => {
         const password = form.password.value;
         try {
             const userData = await loginUser(email, password);
-            console.log("Connecté :", userData);
 
-            localStorage.setItem("user", JSON.stringify(userData));
+            localStorage.setItem("user", JSON.stringify(userData.utilisateur));
             console.log(localStorage, "localStorage");
             window.location.href = "/";
         } catch (err) {
@@ -36,7 +35,7 @@ export const loginPage = () => {
             errorMsg.textContent = "Échec de la connexion.";
             errorMsg.style.display = "block";
         }
-        console.log("Tentative de connexion :", email, password);
+        
     });
 
     return wrapper;

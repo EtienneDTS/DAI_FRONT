@@ -1,3 +1,5 @@
+import { resetCart } from "../utils";
+
 export const productDetail = (product) => {
     console.log(product, "produit");
     const wrapper = document.createElement("div");
@@ -62,7 +64,8 @@ export const productDetail = (product) => {
 
     addBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        console.log(`Ajout au panier : ${product.nom} x${quantity}`);
+        const idUser = JSON.parse(localStorage.getItem("user")).id;
+        addProductToCart(idUser, product.id, qtyDisplay.textContent);
     });
 
     return wrapper;

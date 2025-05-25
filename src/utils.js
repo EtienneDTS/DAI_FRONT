@@ -19,13 +19,15 @@ export const resetList = async () => {
 export const resetCart = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
     const userId = user?.id;
-    const cartData = await getCart(userId);
+    const userShop = user?.magasin?.id;
+    const cartData = await getCart(userId, userShop);
+    console.log(cartData, "cartData");
     let cartPage = document.querySelector(".cart-page");
     cartPage.replaceWith(cart(cartData.lignes, cartData.idPanier));
     cartPage = document.querySelector(".cart-page");
     const cartIcon = document.querySelector(".cart-container");
     cartIcon.addEventListener("click", () => {
-       cartPage.classList.toggle("open");
+        cartPage.classList.toggle("open");
     });
 };
 
@@ -33,15 +35,13 @@ export const resetListNames = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
     const allList = await getLists(user.id);
     const listData = allList.map((l) => ({ nom: l.noml, id: l.id }));
-    console.log(listData, "ici")
-    const productCards = document.querySelectorAll(".product-card")
-    productCards.forEach((card)=> {
+    const productCards = document.querySelectorAll(".product-card");
+    productCards.forEach((card) => {
         const productId = card.id;
-        
-        
-        const listChoice = card.querySelector(".list-choices")
-        listChoice.innerHTML = ""
-        listData.forEach((listItem)=> {
+
+        const listChoice = card.querySelector(".list-choices");
+        listChoice.innerHTML = "";
+        listData.forEach((listItem) => {
             const li = document.createElement("li");
             li.textContent = listItem.nom;
             li.dataset.id = listItem.id;
@@ -53,10 +53,8 @@ export const resetListNames = async () => {
                 overlay.classList.remove("show");
                 resetList();
             });
-            
+
             listChoice.appendChild(li);
-        })
-
-    })
-}
-
+        });
+    });
+};

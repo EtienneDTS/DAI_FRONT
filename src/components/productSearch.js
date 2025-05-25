@@ -12,7 +12,7 @@ export const productSearch = (term, productTest) => {
     );
 
     let currentPage = 1;
-    const perPage = 6;
+    const perPage = 9; 
 
     let state = {
         stock: false,
@@ -65,13 +65,11 @@ export const productSearch = (term, productTest) => {
       <div class="pagination"></div>
     `;
 
-        // Sélections DOM
         const stockFilter = wrapper.querySelector("#stockFilter");
         const bioFilter = wrapper.querySelector("#bioFilter");
         const categoryFilter = wrapper.querySelector("#categoryFilter");
         const sortFilter = wrapper.querySelector("#sortFilter");
 
-        // Appliquer filtres à la volée
         let visibleProducts = [...filteredProducts];
         if (state.stock) {
             visibleProducts = visibleProducts.filter(
@@ -102,7 +100,6 @@ export const productSearch = (term, productTest) => {
                 break;
         }
 
-        // Pagination
         const totalPages = Math.ceil(visibleProducts.length / perPage);
         const start = (currentPage - 1) * perPage;
         const end = start + perPage;
@@ -113,27 +110,47 @@ export const productSearch = (term, productTest) => {
         });
 
         const pagination = wrapper.querySelector(".pagination");
-        for (let i = 1; i <= totalPages; i++) {
+        pagination.innerHTML = "";
+
+        const createPageBtn = (text, page, disabled = false) => {
             const btn = document.createElement("button");
-            btn.textContent = i;
-            if (i === currentPage) btn.disabled = true;
-            btn.addEventListener("click", () => {
-                currentPage = i;
-                render();
-            });
+            btn.textContent = text;
+            btn.disabled = disabled;
+            if (!disabled) {
+                btn.addEventListener("click", () => {
+                    currentPage = page;
+                    render();
+                });
+            }
             pagination.appendChild(btn);
+        };
+
+        if (totalPages > 1) {
+            if (currentPage > 1) createPageBtn("←", currentPage - 1);
+
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+
+            for (let i = startPage; i <= endPage; i++) {
+                createPageBtn(i, i, i === currentPage);
+            }
+
+            if (currentPage < totalPages) createPageBtn("→", currentPage + 1);
         }
 
         stockFilter.addEventListener("change", () => {
             state.stock = stockFilter.checked;
+            currentPage = 1;
             render();
         });
         bioFilter.addEventListener("change", () => {
             state.bio = bioFilter.checked;
+            currentPage = 1;
             render();
         });
         categoryFilter.addEventListener("change", () => {
             state.category = categoryFilter.value;
+            currentPage = 1;
             render();
         });
         sortFilter.addEventListener("change", () => {
