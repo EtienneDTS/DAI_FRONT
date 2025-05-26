@@ -319,20 +319,17 @@ export const deleteProductFromCart = async (idCart, idProduct) => {
 
 export const addProductToCart = async (idUser, idProduit, quantity) => {
     try {
-        const response = await fetch(
-            `${BASEURL}/panier/ajouter-produit`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    idUtilisateur: idUser,
-                    idProduit: idProduit,
-                    quantite: quantity 
-                }),
-            }
-        );
+        const response = await fetch(`${BASEURL}/panier/ajouter-produit`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                idUtilisateur: idUser,
+                idProduit: idProduit,
+                quantite: quantity,
+            }),
+        });
         if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
     } catch (err) {
         console.error("Erreur lors du fetch du produit :", err);
@@ -341,27 +338,25 @@ export const addProductToCart = async (idUser, idProduit, quantity) => {
 };
 
 export async function getUserAgeStats() {
-  const response = await fetch("http://localhost:8081/utilisateurs/ages", {
-    credentials: "include", 
-  });
+    const response = await fetch("http://localhost:8081/utilisateurs/ages", {
+        credentials: "include",
+    });
 
-  if (!response.ok) {
-    throw new Error("Erreur lors de la récupération des stats d'âge");
-  }
+    if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des stats d'âge");
+    }
 
-  return await response.json();
+    return await response.json();
 }
-
 
 export async function fetchAllCatalogProducts() {
-  const res = await fetch("http://localhost:8081/api/produits");
-  return await res.json();
+    const res = await fetch("http://localhost:8081/api/produits");
+    return await res.json();
 }
 
-
 export async function fetchAllCategoryNames() {
-  const res = await fetch("http://localhost:8081/categories");
-  return await res.json();
+    const res = await fetch("http://localhost:8081/categories");
+    return await res.json();
 }
 
 export const deleteCart = async (idPanier) => {
@@ -381,12 +376,15 @@ export const deleteCart = async (idPanier) => {
 
 export const transfertListToCart = async (idUser, idList) => {
     try {
-        const response = await fetch(`${BASEURL}/listes/${idList}/deverser-dans-panier/${idUser}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
+        const response = await fetch(
+            `${BASEURL}/listes/${idList}/deverser-dans-panier/${idUser}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
             }
-        });
+        );
 
         if (!response.ok) {
             throw new Error("erreur lors de la modification du produit");
@@ -447,7 +445,7 @@ export const order = async (idCart, date, slot) => {
                 },
                 body: JSON.stringify({
                     date: date,
-                    creneaux: slot
+                    creneaux: slot,
                 }),
             }
         );
@@ -488,7 +486,6 @@ export const endCommande = async (idCart) => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                
             }
         );
         if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
@@ -517,7 +514,6 @@ export const getOrders = async (idShop) => {
         return [];
     }
 };
-
 
 export const getDeals = async () => {
     try {

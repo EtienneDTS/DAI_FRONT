@@ -45,3 +45,20 @@
 .user-actions button:hover {
     background: #ddd;
 }
+
+.user-actions select {
+    width: 100%;
+    padding: 0.4rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background: #fff;
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+}
+
+.user-actions label {
+    font-size: 0.85rem;
+    color: #555;
+    display: block;
+    margin-bottom: 0.2rem;
+}

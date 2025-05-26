@@ -1,3 +1,4 @@
+import { addProductToCart } from "../api";
 import { resetCart } from "../utils";
 
 export const productDetail = (product) => {
@@ -62,10 +63,11 @@ export const productDetail = (product) => {
         qtyDisplay.textContent = quantity;
     });
 
-    addBtn.addEventListener("click", (e) => {
+    addBtn.addEventListener("click", async (e) => {
         e.stopPropagation();
         const idUser = JSON.parse(localStorage.getItem("user")).id;
-        addProductToCart(idUser, product.id, qtyDisplay.textContent);
+        await addProductToCart(idUser, product.id, qtyDisplay.textContent);
+        resetCart();
     });
 
     return wrapper;
