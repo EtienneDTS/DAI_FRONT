@@ -418,7 +418,7 @@ export const getShops = async () => {
 export const modifyShop = async (idUser, newIdShop) => {
     try {
         const response = await fetch(
-            `${BASEURL}/utilisateur/${idUser}/magasin/${newIdShop}`,
+            `${BASEURL}/utilisateurs/${idUser}/magasin/${newIdShop}`,
             {
                 method: "PUT",
                 headers: {

@@ -178,6 +178,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     //DASHBOARD
     else if (path === "/dashboard") {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user.role !== "gérant") window.location.href = "/dashboard";
+        const nav = document.querySelector(".navbar");
+        if (nav) nav.style.display = "none";
         App.innerHTML = "";
         App.appendChild(await managerDashboard());
     }

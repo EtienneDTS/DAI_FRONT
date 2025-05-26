@@ -29,10 +29,10 @@ export const loginPage = () => {
 
             localStorage.setItem("user", JSON.stringify(userData.utilisateur));
             console.log(localStorage, "localStorage");
-            if (userData.utilisateur.role == "gérant") {
+            if (userData.utilisateur.role === "gérant") {
               window.location.href = "/dashboard";
             }
-            else if (userData.utilisateur.role == "préparateur") {
+            else if (userData.utilisateur.role === "préparateur") {
               window.location.href = "/orders";
             }
             else {

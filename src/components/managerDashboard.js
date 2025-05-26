@@ -29,19 +29,22 @@ export async function managerDashboard() {
 
   // ===== 1. En-tête
   const header = document.createElement("div");
+  const user = JSON.parse(localStorage.getItem("user"));
   header.classList.add("dashboard-header");
   header.innerHTML = `
     <div class="dashboard-user">
       <img src="/person-fill-x.svg" alt="avatar" class="avatar">
       <div>
-        <h2>Jean Dupont</h2>
+        <h2>${user.nom} ${user.prenom}</h2>
         <p>Mon Supermarché</p>
       </div>
     </div>
   `;
   container.appendChild(header);
 
-  // ===== 2. Bouton ajout de produit
+  document.querySelector(".avatar").addEventListener("click", ()=> {
+    document.querySelector(".user-menu").classList.toggle("show");
+  })
   const uploadBox = document.createElement("div");
   uploadBox.classList.add("upload-box");
 
@@ -78,7 +81,6 @@ export async function managerDashboard() {
     let successCount = 0;
     let erreurs = [];
 
-    // Cas tableau de produits
     if (Array.isArray(parsed)) {
       for (let i = 0; i < parsed.length; i++) {
         const prod = parsed[i];
