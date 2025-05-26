@@ -6,7 +6,7 @@ import {
     deleteProductFromList,
     transfertListToCart
 } from "../api";
-import { resetListNames } from "../utils";
+import { resetCart, resetListNames } from "../utils";
 
 
 export const lists = (lists) => {
@@ -167,9 +167,8 @@ export const lists = (lists) => {
             btn.addEventListener("click", async () => {
                 const listId = parseInt(btn.closest(".list-item")?.dataset.id);
                 const user = JSON.parse(localStorage.getItem("user"));
-                const userCartId = user?.panierActifId
-                console.log(userCartId, listId)
-                await transfertListToCart(userCartId, listId)
+                await transfertListToCart(user?.id, listId)
+                resetCart();
             });
         })
 

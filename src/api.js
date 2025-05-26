@@ -379,9 +379,9 @@ export const deleteCart = async (idPanier) => {
     }
 };
 
-export const transfertListToCart = async (idCart, idList) => {
+export const transfertListToCart = async (idUser, idList) => {
     try {
-        const response = await fetch(`${BASEURL}/listes/${idList}/deverser-dans-panier/${idCart}`, {
+        const response = await fetch(`${BASEURL}/listes/${idList}/deverser-dans-panier/${idUser}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -436,7 +436,7 @@ export const modifyShop = async (idUser, newIdShop) => {
     }
 };
 
-export const order = async (idCart) => {
+export const order = async (idCart, date, slot) => {
     try {
         const response = await fetch(
             `${BASEURL}/panier/${idCart}/passer-commande`,
@@ -445,6 +445,10 @@ export const order = async (idCart) => {
                 headers: {
                     "Content-Type": "application/json",
                 },
+                body: JSON.stringify({
+                    date: date,
+                    creneaux: slot
+                }),
             }
         );
         if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
@@ -484,11 +488,67 @@ export const endCommande = async (idCart) => {
                 headers: {
                     "Content-Type": "application/json",
                 },
+                
             }
         );
         if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
     } catch (err) {
         console.error("Erreur lors du fetch du produit :", err);
+        return [];
+    }
+};
+
+export const getOrders = async (idShop) => {
+    try {
+        const response = await fetch(
+            `${BASEURL}/panier/magasin/${idShop}/commandes`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
+        const data = await response.json();
+        return data ? data : [];
+    } catch (err) {
+        console.error("Erreur lors du fetch du produit :", err);
+        return [];
+    }
+};
+
+
+export const getDeals = async () => {
+    try {
+        const response = await fetch(`${BASEURL}/promotions`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
+        const data = await response.json();
+        return Array.isArray(data) ? data : [];
+    } catch (err) {
+        console.error("Erreur lors du fetch des produits :", err);
+        return [];
+    }
+};
+
+export const getSlot = async () => {
+    try {
+        const response = await fetch(`${BASEURL}/choisir-creneaux`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
+        const data = await response.json();
+        return Array.isArray(data) ? data : [];
+    } catch (err) {
+        console.error("Erreur lors du fetch des produits :", err);
         return [];
     }
 };
