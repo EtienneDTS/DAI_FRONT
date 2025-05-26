@@ -15,12 +15,12 @@ select.multiple = true;
 getCategories()
   .then(categories => {
     select.innerHTML = `
-      <option value="all" selected>📋 Toutes les catégories</option>
+      <option value="all" selected>Toutes les catégories</option>
       ${categories.map(cat => `<option value="${cat}">${cat}</option>`).join("")}
     `;
   })
   .catch(err => {
-    select.innerHTML = `<option disabled>⚠️ Erreur chargement</option>`;
+    select.innerHTML = `<option disabled>Erreur chargement</option>`;
     console.error("Erreur catégories :", err);
   });
 
@@ -107,7 +107,7 @@ getCategories()
             if (ruptures.length > 0) {
             ruptureAlert.innerHTML = `
                 <div class="rupture-box">
-                ⚠️ <strong>${ruptures.length}</strong> produit(s) en rupture :
+                 <strong>${ruptures.length}</strong> produit(s) en rupture :
                 <ul>${ruptures.map(p => `<li>${p.nomProduit}</li>`).join("")}</ul>
                 </div>
             `;

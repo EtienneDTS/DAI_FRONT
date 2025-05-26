@@ -338,7 +338,7 @@ export const addProductToCart = async (idUser, idProduit, quantity) => {
 
 export async function getUserAgeStats() {
   const response = await fetch("http://localhost:8081/utilisateurs/ages", {
-    credentials: "include", // si tu utilises l'authentification
+    credentials: "include", 
   });
 
   if (!response.ok) {
@@ -346,4 +346,16 @@ export async function getUserAgeStats() {
   }
 
   return await response.json();
+}
+
+
+export async function fetchAllCatalogProducts() {
+  const res = await fetch("http://localhost:8081/api/produits");
+  return await res.json();
+}
+
+
+export async function fetchAllCategoryNames() {
+  const res = await fetch("http://localhost:8081/categories");
+  return await res.json();
 }

@@ -1,6 +1,14 @@
 import { getStockPrevision } from "../apis/getStokPrevision";
 import { stockDashboard } from "./stockDashboard";
 import { getUserAgeStats } from "../api.js";
+import { getProducts } from "../api.js";
+import { fetchAllCatalogProducts } from "../api";
+
+import { getCategories } from "../api";
+
+
+
+
 
 
 // Tu peux simuler d'autres données ici
@@ -43,7 +51,7 @@ export async function managerDashboard() {
 
   const uploadLabel = document.createElement("label");
   uploadLabel.classList.add("upload-button");
-  uploadLabel.textContent = "➕ Ajouter un produit (JSON)";
+  uploadLabel.textContent = "Ajouter un produit (JSON)";
   uploadLabel.appendChild(fileInput);
 
   fileInput.addEventListener("change", async (e) => {
@@ -56,7 +64,7 @@ export async function managerDashboard() {
 
     const champsRequis = [
       "nomP", "prixUnitaireP", "prixKgP", "poidsP",
-      "nutriP", "conditionnementP", "bioP", "marqueP", "urlImage", "idR", "idCate"
+      "nutriP", "conditionnementP", "bioP", "marqueP", "urlImage", "idR", "idCate","idPr"
     ];
 
     const validerProduit = (prod, index = null) => {
@@ -67,34 +75,81 @@ export async function managerDashboard() {
       }
     };
 
-    // Cas : un seul produit
-    if (typeof parsed === "object" && parsed.nomP) {
-      validerProduit(parsed);
+    let successCount = 0;
+    let erreurs = [];
 
-      // ✅ Envoi au backend
-      const formData = new FormData();
-      formData.append("file", file);
+    // Cas tableau de produits
+    if (Array.isArray(parsed)) {
+      for (let i = 0; i < parsed.length; i++) {
+        const prod = parsed[i];
 
-      const response = await fetch("http://localhost:8081/api/produits/upload-json", {
-        method: "POST",
-        body: formData,
-      });
+        try {
+          validerProduit(prod, i);
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error("Erreur serveur : " + errorText);
+          const blob = new Blob([JSON.stringify(prod)], { type: "application/json" });
+          const formData = new FormData();
+          formData.append("file", blob, `produit-${i + 1}.json`);
+
+          const response = await fetch("http://localhost:8081/api/produits/upload-json", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            erreurs.push(` Produit ${i + 1} : ${errorText}`);
+          } else {
+            const produitCree = await response.json();
+            successCount++;
+            console.log(` Produit ${i + 1} ajouté : ${produitCree.nomP}`);
+          }
+
+        } catch (err) {
+          erreurs.push(` Produit ${i + 1} invalide : ${err.message}`);
+        }
       }
 
-      const produitCree = await response.json();
-      alert(`✅ Produit créé : ${produitCree.nomP}`);
+      // Affichage du résumé
+      const total = parsed.length;
+      const erreurText = erreurs.length
+        ? "\n\nDétails des erreurs :\n" + erreurs.join("\n")
+        : "";
+
+      alert(` ${successCount}/${total} produit(s) ajoutés avec succès.${erreurText}`);
+    }
+
+    // Cas 1 seul produit
+    else if (typeof parsed === "object" && parsed.nomP) {
+      try {
+        validerProduit(parsed);
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const response = await fetch("http://localhost:8081/api/produits/upload-json", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error("Erreur serveur : " + errorText);
+        }
+
+        const produitCree = await response.json();
+        alert(` Produit créé : ${produitCree.nomP}`);
+
+      } catch (err) {
+        alert(" Erreur : " + err.message);
+      }
     }
 
     else {
-      throw new Error("Format JSON non reconnu (un seul produit attendu)");
+      throw new Error("Format JSON non reconnu (objet ou tableau attendu)");
     }
 
   } catch (err) {
-    alert("❌ Erreur : " + err.message);
+    alert("Erreur : " + err.message);
     console.error(err);
   }
 });
@@ -109,11 +164,185 @@ export async function managerDashboard() {
   const stockSection = stockDashboard(previsions);
   container.appendChild(stockSection);
 
+  
+ //Restock des produits du magasin Borderouge:
+
+ 
+function createRestockForm(produits) {
+  const formContainer = document.createElement("div");
+  formContainer.classList.add("restock-form");
+
+  const title = document.createElement("h3");
+  title.textContent = "Refaire le stock (Borderouge)   ";
+  formContainer.appendChild(title);
+
+  const form = document.createElement("form");
+
+  const select = document.createElement("select");
+  select.name = "produit";
+  produits.forEach(p => {
+    const option = document.createElement("option");
+    option.value = p.id;
+    option.textContent = `${p.nom} (${p.marque})`;
+    select.appendChild(option);
+  });
+
+  const qtyInput = document.createElement("input");
+  qtyInput.type = "number";
+  qtyInput.min = 1;
+  qtyInput.placeholder = "Quantité à ajouter";
+  qtyInput.required = true;
+
+  const submit = document.createElement("button");
+  submit.type = "submit";
+  submit.textContent = "Ajouter au stock";
+
+  
+
+  form.appendChild(select);
+  form.appendChild(qtyInput);
+  form.appendChild(submit);
+  formContainer.appendChild(form);
+
+  formContainer.style.display = "flex";
+  formContainer.style.alignItems = "center";
+  formContainer.style.gap = "5px";
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const idProduit = select.value;
+    const quantite = parseInt(qtyInput.value);
+
+    const body = {
+      idProduit: parseInt(idProduit),
+      quantiteS: quantite
+    };
+
+    try {
+      const res = await fetch("http://localhost:8081/api/restocker/6/stock/ajouter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+
+      const text = await res.text();
+      alert(text);
+    } catch (err) {
+      console.error("Erreur ajout stock", err);
+      alert("Une erreur est survenue");
+    }
+  });
+
+  return formContainer;
+}
+
+const produitsCatalogue = await getProducts(); // ou ton API existante
+const restockSection = createRestockForm(produitsCatalogue);
+container.appendChild(restockSection);
+
+
+// Arrivage nouveux produits
+
+async function createFullRestockForm() {
+  const container = document.createElement("div");
+  container.classList.add("restock-form");
+
+  const title = document.createElement("h3");
+  title.textContent = "Ajouter un produit existant au stock";
+  container.appendChild(title);
+
+  // --- Sélecteur de catégories ---
+  const selectCategorie = document.createElement("select");
+  selectCategorie.innerHTML = `<option value="">-- Choisir une catégorie --</option>`;
+
+  const categories = await getCategories(); // appel à /categories
+  categories.forEach(cat => {
+    const option = document.createElement("option");
+    option.value = cat;
+    option.textContent = cat;
+    selectCategorie.appendChild(option);
+  });
+  container.appendChild(selectCategorie);
+
+  // --- Sélecteur de produits ---
+  const selectProduit = document.createElement("select");
+  selectProduit.innerHTML = `<option value="">-- Choisir un produit --</option>`;
+  container.appendChild(selectProduit);
+
+  // --- Champ quantité ---
+  const inputQuantite = document.createElement("input");
+  inputQuantite.type = "number";
+  inputQuantite.placeholder = "Quantité à ajouter";
+  inputQuantite.min = 1;
+  container.appendChild(inputQuantite);
+
+  // --- Bouton d'envoi ---
+  const submitBtn = document.createElement("button");
+  submitBtn.textContent = "Ajouter au stock";
+  container.appendChild(submitBtn);
+
+  container.style.display = "flex";
+  container.style.alignItems = "center";
+  container.style.gap = "15px";
+
+
+  // --- Mise à jour des produits lors du changement de catégorie ---
+  selectCategorie.addEventListener("change", async () => {
+    const selectedCat = selectCategorie.value;
+    const allProduits = await fetchAllCatalogProducts();
+
+    const filtres = allProduits.filter(p => {
+  console.log("Comparaison :", p.categorie, "==", selectedCat);
+  return p.categorie === selectedCat;
+  });
+
+
+    selectProduit.innerHTML = `<option value="">-- Choisir un produit --</option>`;
+    filtres.forEach(p => {
+      const opt = document.createElement("option");
+      opt.value = p.id;
+      opt.textContent = `${p.nom} (${p.marque})`;
+      selectProduit.appendChild(opt);
+    });
+  });
+
+  // --- Envoi vers le backend ---
+  submitBtn.addEventListener("click", async () => {
+    const idProduit = selectProduit.value;
+    const quantite = parseInt(inputQuantite.value, 10);
+
+    if (!idProduit || !quantite || quantite <= 0) {
+      alert("Veuillez remplir tous les champs.");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:8081/api/restocker/6/stock/ajouter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idProduit: Number(idProduit), quantiteS: quantite }),
+      });
+
+      const text = await res.text();
+      alert(text);
+    } catch (e) {
+      alert("Erreur lors de l'ajout du stock");
+      console.error(e);
+    }
+  });
+
+
+
+  return container;
+}
+
+const fullRestockForm = await createFullRestockForm();
+container.appendChild(fullRestockForm);
   // ===== 4. Top ventes
   const topVentesBox = document.createElement("div");
   topVentesBox.classList.add("top-ventes");
   topVentesBox.innerHTML = `
-    <h3>🔝 Produits les plus vendus</h3>
+    <h3>Produits les plus vendus</h3>
     <ul>
       ${topVentesMock.map(p => `<li>${p.nom} — ${p.quantite} ventes</li>`).join("")}
     </ul>
@@ -124,7 +353,7 @@ export async function managerDashboard() {
   const chartSection = document.createElement("div");
   chartSection.classList.add("client-profile");
   chartSection.innerHTML = `
-  <h3>📊 Répartition des tranches d'âge</h3>
+  <h3>Répartition des tranches d'âge</h3>
   <div class="chart-wrapper">
     <canvas id="ageChart"></canvas>
   </div>
@@ -169,6 +398,8 @@ export async function managerDashboard() {
 }).catch(err => {
   console.error("Erreur graphique :", err);
 });
+
+
 
   return container; // ← Fin de managerDashboard
 }
