@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         resetList();
         listPage = document.querySelector(".lists-page");
     } else {
-        console.log("ici");
+        
         login.addEventListener("click", () => {
             window.location.href = "/login";
         });

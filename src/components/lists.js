@@ -4,6 +4,7 @@ import {
     deleteList,
     modifyList,
     deleteProductFromList,
+    transfertListToCart
 } from "../api";
 import { resetListNames } from "../utils";
 
@@ -161,6 +162,16 @@ export const lists = (lists) => {
                 window.location.href = `/notes/${listId}`;
             });
         });
+
+        wrapper.querySelectorAll(".add-list-to-cart").forEach((btn)=> {
+            btn.addEventListener("click", async () => {
+                const listId = parseInt(btn.closest(".list-item")?.dataset.id);
+                const user = JSON.parse(localStorage.getItem("user"));
+                const userCartId = user?.panierActifId
+                console.log(userCartId, listId)
+                await transfertListToCart(userCartId, listId)
+            });
+        })
 
         wrapper.querySelectorAll(".increase").forEach((btn) => {
             btn.addEventListener("click", async () => {

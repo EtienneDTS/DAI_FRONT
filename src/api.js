@@ -211,7 +211,7 @@ export const createPostit = async (idList) => {
 
 export const modifyPostit = async (idPostit, text) => {
     try {
-        const response = await fetch(`${BASEURL}/listes/${idPostit}/postits`, {
+        const response = await fetch(`${BASEURL}/listes/postits/${idPostit}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -227,7 +227,7 @@ export const modifyPostit = async (idPostit, text) => {
 
 export const deletePostit = async (idPostit) => {
     try {
-        const response = await fetch(`${BASEURL}/listes/${idPostit}`, {
+        const response = await fetch(`${BASEURL}/listes/postits/${idPostit}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -320,13 +320,17 @@ export const deleteProductFromCart = async (idCart, idProduct) => {
 export const addProductToCart = async (idUser, idProduit, quantity) => {
     try {
         const response = await fetch(
-            `${BASEURL}/panier/${idUser}/produits/${idProduit}?quantite=${quantity}`,
+            `${BASEURL}/panier/ajouter-produit`,
             {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ quantite: quantity }),
+                body: JSON.stringify({
+                    idUtilisateur: idUser,
+                    idProduit: idProduit,
+                    quantite: quantity 
+                }),
             }
         );
         if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
@@ -359,3 +363,132 @@ export async function fetchAllCategoryNames() {
   const res = await fetch("http://localhost:8081/categories");
   return await res.json();
 }
+
+export const deleteCart = async (idPanier) => {
+    try {
+        const response = await fetch(`${BASEURL}/panier/${idPanier}/vider`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
+    } catch (err) {
+        console.error("Erreur lors du fetch du postit :", err);
+        return [];
+    }
+};
+
+export const transfertListToCart = async (idCart, idList) => {
+    try {
+        const response = await fetch(`${BASEURL}/listes/${idList}/deverser-dans-panier/${idCart}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error("erreur lors de la modification du produit");
+        }
+    } catch (err) {
+        console.error("Erreur de login :", err);
+        throw err;
+    }
+};
+
+export const getShops = async () => {
+    try {
+        const response = await fetch(`${BASEURL}/magasins`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
+        const data = await response.json();
+        console.log("data", data);
+        return Array.isArray(data) ? data : [];
+    } catch (err) {
+        console.error("Erreur lors du fetch des produits :", err);
+        return [];
+    }
+};
+
+export const modifyShop = async (idUser, newIdShop) => {
+    try {
+        const response = await fetch(
+            `${BASEURL}/utilisateur/${idUser}/magasin/${newIdShop}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
+        const data = await response.json();
+        console.log("data", data);
+        return data ? data : {};
+    } catch (err) {
+        console.error("Erreur lors du fetch du produit :", err);
+        return [];
+    }
+};
+
+export const order = async (idCart) => {
+    try {
+        const response = await fetch(
+            `${BASEURL}/panier/${idCart}/passer-commande`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
+        const data = await response.json();
+        console.log("data", data);
+        return data ? data : {};
+    } catch (err) {
+        console.error("Erreur lors du fetch du produit :", err);
+        return [];
+    }
+};
+
+export const startCommande = async (idCart) => {
+    try {
+        const response = await fetch(
+            `${BASEURL}/panier/${idCart}/demarrer-preparation`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
+    } catch (err) {
+        console.error("Erreur lors du fetch du produit :", err);
+        return [];
+    }
+};
+
+export const endCommande = async (idCart) => {
+    try {
+        const response = await fetch(
+            `${BASEURL}/panier/${idCart}/terminer-preparation`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
+    } catch (err) {
+        console.error("Erreur lors du fetch du produit :", err);
+        return [];
+    }
+};

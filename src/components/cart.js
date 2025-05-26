@@ -1,4 +1,5 @@
-import { modifyCartProduct, deleteProductFromCart } from "../api";
+import { modifyCartProduct, deleteProductFromCart, deleteCart } from "../api";
+import { resetCart } from "../utils";
 
 export const cart = (products, idPanier) => {
     console.log(products, "produits")
@@ -10,6 +11,7 @@ export const cart = (products, idPanier) => {
 
         wrapper.innerHTML = `
       <h2>Mon panier</h2>
+      ${products?.length !== 0 ? '<button class="empty-cart">Vider le panier </button>' : ''}
       <div class="cart-items">
         ${
             products?.length === 0
@@ -89,10 +91,12 @@ export const cart = (products, idPanier) => {
                 try {
                     
                     if (product && product.quantite > 1) {
-                    product.quantite--;
-                    renderCart();
-                    await modifyCartProduct(idPanier, idProduct, newQuantity)
-                    
+                        product.quantite--;
+                        renderCart();
+                        await modifyCartProduct(idPanier, idProduct, newQuantity)
+                    }
+                    else {
+                        await deleteProductFromCart(idPanier, idProduct)
                     }
                 } catch (error) {
                     console.log(error, "error")
@@ -100,6 +104,19 @@ export const cart = (products, idPanier) => {
                 
             });
         });
+
+        wrapper.querySelector(".empty-cart").addEventListener("click", async ()=> {
+            if (confirm("Voulez-vous supprimer tous les produits de votre panier ?")) {
+                await deleteCart(idPanier)
+                resetCart();
+            }
+        }) 
+
+        wrapper.querySelector(".order")?.addEventListener("click", async ()=> {
+            console.log("click")
+            window.location.href = "/";
+            
+        }) 
     }
 
     renderCart();
