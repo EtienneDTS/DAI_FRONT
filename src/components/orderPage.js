@@ -1,12 +1,12 @@
-export const OrderPage = (orders, onStatusChange) => {
+export const OrderPage = (orders) => {
     const wrapper = document.createElement("div");
     wrapper.className = "order-page";
 
     wrapper.innerHTML = `
       <div class="order-tabs">
-        <button class="tab-btn active" data-tab="attente">🕒 En attente</button>
-        <button class="tab-btn" data-tab="encours">🚚 En cours</button>
-        <button class="tab-btn" data-tab="pret">✅ Prêtes</button>
+        <button class="tab-btn active" data-tab="attente"> En attente</button>
+        <button class="tab-btn" data-tab="encours"> En cours</button>
+        <button class="tab-btn" data-tab="pret"> Prêtes</button>
       </div>
       <div class="order-lists">
         <div class="order-section active" data-tab="attente"></div>

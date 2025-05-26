@@ -227,6 +227,7 @@ nav > div:nth-of-type(3) {
 }
 
 .shop-selection {
+    position: relative;
     background: white;
     padding: 2rem;
     border-radius: 12px;
@@ -244,11 +245,16 @@ nav > div:nth-of-type(3) {
 
 .shop-dropdown {
     width: 100%;
-    padding: 0.6rem;
+    padding: 0.5rem 0.8rem;
     font-size: 1rem;
-    border-radius: 6px;
+    border-radius: 8px;
     border: 1px solid #ccc;
-    margin-bottom: 1rem;
+    background-color: #f9f9f9;
+    appearance: none;
+    line-height: 1.4;
+    margin: 0 auto 1rem;
+    display: block;
+    box-sizing: border-box;
 }
 
 .confirm-shop {
@@ -261,6 +267,6 @@ nav > div:nth-of-type(3) {
     cursor: pointer;
 }
 
-.confirm-store:hover {
+.confirm-shop:hover {
     background-color: #a10015;
 }

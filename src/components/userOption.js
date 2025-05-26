@@ -4,11 +4,9 @@ export const userOption = (user, shops = []) => {
     const wrapper = document.createElement("div");
     wrapper.className = "user-menu";
 
-    const currentStoreId = localStorage.getItem("storeId");
-
     wrapper.innerHTML = `
       <div class="user-info">
-        <strong>${user.nom}</strong> (${user.role})
+        <strong>${user.nom} ${user.prenom}</strong> (${user.role})
       </div>
       <ul class="user-actions">
         <li>
@@ -23,7 +21,9 @@ export const userOption = (user, shops = []) => {
                                 ?.id
                                 ? "selected"
                                 : ""
-                        }>${s.nomM}</option>`
+                        }>${s.nomM} à ${
+                            Math.floor(Math.random() * 10) + 1
+                        } km</option>`
                 )
                 .join("")}
           </select>

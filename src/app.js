@@ -86,7 +86,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <select class="shop-dropdown">
                     ${magasins
                         .map(
-                            (m) => `<option value="${m.id}">${m.nomM}</option>`
+                            (m) =>
+                                `<option value="${m.id}">${m.nomM} à ${
+                                    Math.floor(Math.random() * 10) + 1
+                                } km</option>`
                         )
                         .join("")}
                 </select>
@@ -98,7 +101,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         popup.querySelector(".confirm-shop").addEventListener("click", () => {
             const selectedId = popup.querySelector(".shop-dropdown").value;
             document.body.removeChild(popup);
-        
         });
     }
 

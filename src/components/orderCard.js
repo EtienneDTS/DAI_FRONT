@@ -1,4 +1,4 @@
-export const OrderCard = (order, onStatusChange) => {
+export const OrderCard = (order) => {
     const wrapper = document.createElement("div");
     wrapper.className = "order-card";
 
