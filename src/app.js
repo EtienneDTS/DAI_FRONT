@@ -13,7 +13,7 @@ import {
     getShops,
     getOrders,
     loginUserA,
-    getRecommendedProducts
+    getRecommendedProducts,
 } from "./api";
 import { userOption } from "./components/userOption";
 import { notesPage } from "./components/notesPage";
@@ -30,6 +30,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const login = document.querySelector(".login");
     const loginText = document.querySelector(".login-text");
     const listIcon = document.querySelector(".list-container");
+    
+    const prods = await getProducts();
+    localStorage.setItem("allProducts", JSON.stringify(prods));
 
     const searchText = document.querySelector(".input-text");
 
@@ -40,10 +43,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     let listwrapper = lists([]);
     const cartWrapper = cart([]);
-    cartWrapper.classList.remove("open")
+    cartWrapper.classList.remove("open");
     body.appendChild(cartWrapper);
     body.appendChild(listwrapper);
-    
+
     let listPage = document.querySelector(".lists-page");
 
     resetCart();
@@ -55,13 +58,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     const magasins = await getShops();
     if (localStorage?.getItem("user") !== null) {
         const user = JSON.parse(localStorage.getItem("user"));
-        user?.email?.includes("pickandgo.temp") ? loginText.textContent = "connexion" : loginText.textContent = user.nom ;
+        user?.email?.includes("pickandgo.temp")
+            ? (loginText.textContent = "connexion")
+            : (loginText.textContent = user.nom);
         userRole = user?.role;
 
         body.appendChild(userOption(user, magasins));
         login.addEventListener("click", () => {
             if (user?.email?.includes("pickandgo.temp")) {
-                window.location.href = "/login"
+                window.location.href = "/login";
             }
 
             document.querySelector(".user-menu").classList.toggle("show");
@@ -79,7 +84,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             window.location.href = "/login";
         });
         const user = JSON.parse(localStorage.getItem("user"));
-     
+
         userRole = user?.role;
 
         listIcon.style.display = "none";
@@ -104,19 +109,19 @@ document.addEventListener("DOMContentLoaded", async () => {
             </div>
         `;
         document.body.appendChild(popup);
-        
-        popup.querySelector(".confirm-shop").addEventListener("click", async () => {
-            const magId = popup.querySelector(".shop-dropdown").value;
 
-            const aUser = await loginUserA(magId);
-            
-            console.log(aUser.utilisateur, "Auser")
-            localStorage.setItem("user", JSON.stringify(aUser.utilisateur));
-            document.body.removeChild(popup);
-            window.location.href = "/"
+        popup
+            .querySelector(".confirm-shop")
+            .addEventListener("click", async () => {
+                const magId = popup.querySelector(".shop-dropdown").value;
 
-            
-        });
+                const aUser = await loginUserA(magId);
+
+                console.log(aUser.utilisateur, "Auser");
+                localStorage.setItem("user", JSON.stringify(aUser.utilisateur));
+                document.body.removeChild(popup);
+                window.location.href = "/";
+            });
     }
 
     // ROUTES
@@ -126,8 +131,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         const user = JSON.parse(localStorage.getItem("user"));
         const deals = await getDeals();
         const products = await getProducts();
-        
-        const prod = await getRecommendedProducts(user?.id)
+
+        const prod = await getRecommendedProducts(user?.id);
         const scrollStep = 250;
 
         App.innerHTML = `
@@ -169,7 +174,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         );
 
         document.querySelector(".explore").appendChild(exploreTrack);
-        document.querySelector(".recommandations").appendChild(recommandationTrack);
+        document
+            .querySelector(".recommandations")
+            .appendChild(recommandationTrack);
 
         const exploreTrackEl = document.querySelector(
             `.carousel-track.${exploreTrackName}`
@@ -180,11 +187,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         products.forEach((product) => {
             exploreTrackEl.appendChild(card(product));
-            
         });
 
         prod.forEach((product) => {
-          
             recoTrackEl.appendChild(card(product));
         });
 
@@ -256,16 +261,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (nav) nav.style.display = "none";
         App.innerHTML = "";
         App.appendChild(await managerDashboard());
-        document.querySelector(".avatar").addEventListener("click", ()=> {
-            document.querySelector(".user-menu").classList.toggle("show")
-        })
+        document.querySelector(".avatar").addEventListener("click", () => {
+            document.querySelector(".user-menu").classList.toggle("show");
+        });
     }
 
     //ORDERS
     else if (path === "/orders") {
         const user = JSON.parse(localStorage.getItem("user"));
-        console.log(user, "user")
-        const ordersData = await getOrders(user.magasin.id)
+        console.log(user, "user");
+        const ordersData = await getOrders(user.magasin.id);
         App.innerHTML = "";
         console.log(ordersData, "ordersDAta");
         App.appendChild(OrderPage(ordersData));

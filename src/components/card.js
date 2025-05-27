@@ -8,7 +8,6 @@ export const card = (product) => {
     let quantity = 1;
     const isUnavailable = product.inStock === false;
 
-    // Structure HTML de base
     wrapper.innerHTML = `
       ${
           JSON.parse(localStorage.getItem("user")) !== null

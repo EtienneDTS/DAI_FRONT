@@ -17,16 +17,14 @@ export const resetList = async () => {
 };
 
 export const resetCart = async () => {
-    
     const user = JSON.parse(localStorage.getItem("user"));
     const userId = user?.id;
     const userShop = user?.magasin?.id;
+    console.log(userShop, "userShop");
+    const dispo = await getSlot(userShop);
+    console.log(dispo, "les dispos");
     const cartData = await getCart(userId, userShop);
 
-    console.log(userShop, "userShop")
-    const dispo = await getSlot(userShop);
-    console.log(dispo, "les dispos")
-   
     let cartPage = document.querySelector(".cart-page");
     cartPage.replaceWith(cart(cartData.lignes, cartData.idPanier, dispo));
     cartPage = document.querySelector(".cart-page");
@@ -34,8 +32,7 @@ export const resetCart = async () => {
     cartIcon.addEventListener("click", () => {
         cartPage.classList.toggle("open");
     });
-    cartPage.classList.remove("open")
-    
+    cartPage.classList.remove("open");
 };
 
 export const resetListNames = async () => {

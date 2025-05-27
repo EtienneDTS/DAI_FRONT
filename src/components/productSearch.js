@@ -1,7 +1,6 @@
 import { card } from "./card";
 
 export const productSearch = (term, productTest) => {
-    console.log(productTest, "prodtest")
     const wrapper = document.createElement("div");
     wrapper.className = "product-search-page";
 
@@ -13,12 +12,13 @@ export const productSearch = (term, productTest) => {
     );
 
     let currentPage = 1;
-    const perPage = 9; 
+    const perPage = 9;
 
     let state = {
         stock: false,
         bio: false,
         category: "",
+        rayon: "",
         sort: "az",
     };
 
@@ -28,14 +28,15 @@ export const productSearch = (term, productTest) => {
       <div class="filters">
         <label><input type="checkbox" id="stockFilter" ${
             state.stock ? "checked" : ""
-        } /> En stock</label>
+        }/> En stock</label>
         <label><input type="checkbox" id="bioFilter" ${
             state.bio ? "checked" : ""
-        } /> Bio</label>
+        }/> Bio</label>
+
         <label>Catégorie :
           <select id="categoryFilter">
             <option value="">Toutes</option>
-            ${[...new Set(productTest.map((p) => p.categorie))]
+            ${[...new Set(productTest.map((p) => p.nomCategorie))]
                 .map(
                     (c) =>
                         `<option value="${c}" ${
@@ -45,6 +46,21 @@ export const productSearch = (term, productTest) => {
                 .join("")}
           </select>
         </label>
+
+        <label>Rayon :
+          <select id="rayonFilter">
+            <option value="">Tous</option>
+            ${[...new Set(productTest.map((p) => p.nomRayon))]
+                .map(
+                    (r) =>
+                        `<option value="${r}" ${
+                            state.rayon === r ? "selected" : ""
+                        }>${r}</option>`
+                )
+                .join("")}
+          </select>
+        </label>
+
         <label>Tri :
           <select id="sortFilter">
             <option value="az" ${
@@ -62,6 +78,7 @@ export const productSearch = (term, productTest) => {
           </select>
         </label>
       </div>
+
       <div class="product-grid"></div>
       <div class="pagination"></div>
     `;
@@ -69,20 +86,30 @@ export const productSearch = (term, productTest) => {
         const stockFilter = wrapper.querySelector("#stockFilter");
         const bioFilter = wrapper.querySelector("#bioFilter");
         const categoryFilter = wrapper.querySelector("#categoryFilter");
+        const rayonFilter = wrapper.querySelector("#rayonFilter");
         const sortFilter = wrapper.querySelector("#sortFilter");
 
         let visibleProducts = [...filteredProducts];
+
         if (state.stock) {
             visibleProducts = visibleProducts.filter(
                 (p) => p.inStock !== false
             );
         }
+
         if (state.bio) {
             visibleProducts = visibleProducts.filter((p) => p.bio);
         }
+
         if (state.category) {
             visibleProducts = visibleProducts.filter(
-                (p) => p.categorie === state.category
+                (p) => p.nomCategorie === state.category
+            );
+        }
+
+        if (state.rayon) {
+            visibleProducts = visibleProducts.filter(
+                (p) => p.nomRayon === state.rayon
             );
         }
 
@@ -144,16 +171,25 @@ export const productSearch = (term, productTest) => {
             currentPage = 1;
             render();
         });
+
         bioFilter.addEventListener("change", () => {
             state.bio = bioFilter.checked;
             currentPage = 1;
             render();
         });
+
         categoryFilter.addEventListener("change", () => {
             state.category = categoryFilter.value;
             currentPage = 1;
             render();
         });
+
+        rayonFilter.addEventListener("change", () => {
+            state.rayon = rayonFilter.value;
+            currentPage = 1;
+            render();
+        });
+
         sortFilter.addEventListener("change", () => {
             state.sort = sortFilter.value;
             render();
