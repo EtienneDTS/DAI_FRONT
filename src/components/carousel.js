@@ -14,9 +14,9 @@ export const carousel = (carouselClass, btnClass, scrollStep, maxScroll) => {
     let scrollAmount = 0;
 
     btnLeft.addEventListener("click", () => {
-        console.log("click");
-        scrollAmount = Math.max(0, scrollAmount - scrollStep);
-        track.style.transform = `translateX(-${scrollAmount}px)`;
+      console.log("click");
+      scrollAmount = Math.max(0, scrollAmount - scrollStep);
+      track.style.transform = `translateX(-${scrollAmount}px)`;
     });
 
     btnRight.addEventListener("click", () => {

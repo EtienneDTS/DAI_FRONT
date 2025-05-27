@@ -1,6 +1,7 @@
 import { card } from "./card";
 
 export const productSearch = (term, productTest) => {
+    console.log(productTest, "prodtest")
     const wrapper = document.createElement("div");
     wrapper.className = "product-search-page";
 

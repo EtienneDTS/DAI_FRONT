@@ -12,6 +12,7 @@ import {
     getDeals,
     getShops,
     getOrders,
+    loginUserA
 } from "./api";
 import { userOption } from "./components/userOption";
 import { notesPage } from "./components/notesPage";
@@ -27,7 +28,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const logo = document.querySelector(".logo");
     const login = document.querySelector(".login");
     const loginText = document.querySelector(".login-text");
-    const cartIcon = document.querySelector(".cart-container");
     const listIcon = document.querySelector(".list-container");
 
     const searchText = document.querySelector(".input-text");
@@ -41,26 +41,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     const cartWrapper = cart([]);
     body.appendChild(cartWrapper);
     body.appendChild(listwrapper);
-    const cartPage = document.querySelector(".cart-page");
+    
     let listPage = document.querySelector(".lists-page");
 
-    cartIcon.addEventListener("click", () => cartPage.classList.toggle("open"));
+    resetCart();
     listIcon.addEventListener("click", () => {
         listPage.classList.toggle("open");
     });
 
     logo.addEventListener("click", () => (window.location.href = "/"));
     const magasins = await getShops();
-    if (localStorage.getItem("user") !== null) {
+    if (localStorage?.getItem("user") !== null) {
+        console.log(!localStorage?.getItem("user")?.email?.includes("pickandgo.temp"), "voir resultat")
         const user = JSON.parse(localStorage.getItem("user"));
-        console.log(user, "user");
-        loginText.textContent = user.nom;
-        userRole = user.role;
-
-        console.log(magasins, "magasins");
+      
+        localStorage?.getItem("user")?.email?.includes("pickandgo.temp") ? loginText.textContent = "connexion" : loginText.textContent = user?.nom;
+        userRole = user?.role;
 
         body.appendChild(userOption(user, magasins));
         login.addEventListener("click", () => {
+            if (!localStorage?.getItem("user")?.email?.includes("pickandgo.temp")) {
+                window.location.href = "/login"
+            }
             document.querySelector(".user-menu").classList.toggle("show");
         });
         document.querySelector("#loginIMG").src = "/person-fill-check.svg";
@@ -75,6 +77,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         login.addEventListener("click", () => {
             window.location.href = "/login";
         });
+        const user = JSON.parse(localStorage.getItem("user"));
+        console.log(user, "user");
+        userRole = user?.role;
+
         listIcon.style.display = "none";
         loginText.textContent = "connexion";
 
@@ -97,10 +103,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             </div>
         `;
         document.body.appendChild(popup);
+        
+        popup.querySelector(".confirm-shop").addEventListener("click", async () => {
+            const magId = popup.querySelector(".shop-dropdown").value;
 
-        popup.querySelector(".confirm-shop").addEventListener("click", () => {
-            const selectedId = popup.querySelector(".shop-dropdown").value;
+            const aUser = await loginUserA(magId);
+            
+            console.log(aUser.utilisateur, "Auser")
+            localStorage.setItem("user", JSON.stringify(aUser.utilisateur));
             document.body.removeChild(popup);
+            window.location.href = "/"
+
+            
         });
     }
 
@@ -151,9 +165,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         );
 
         document.querySelector(".explore").appendChild(exploreTrack);
-        document
-            .querySelector(".recommandations")
-            .appendChild(recommandationTrack);
+        document.querySelector(".recommandations").appendChild(recommandationTrack);
 
         const exploreTrackEl = document.querySelector(
             `.carousel-track.${exploreTrackName}`
@@ -241,9 +253,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const user = JSON.parse(localStorage.getItem("user"));
         console.log(user, "user")
         const ordersData = await getOrders(user.magasin.id)
-        
         App.innerHTML = "";
-        //const ordersData = await getOrders(user.magasin.id);
         console.log(ordersData, "ordersDAta");
         App.appendChild(OrderPage(ordersData));
     }

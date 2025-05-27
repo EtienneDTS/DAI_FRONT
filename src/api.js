@@ -20,7 +20,7 @@ export const getProducts = async () => {
 
 export const loginUser = async (email, password) => {
     try {
-        const response = await fetch(`${BASEURL}/login`, {
+        const response = await fetch(`${BASEURL}/login`, {  
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -249,6 +249,7 @@ export async function getCategories() {
 }
 
 export const getCart = async (idUser, idShop) => {
+    if (!idUser === undefined || idShop === undefined) return
     try {
         const response = await fetch(
             `${BASEURL}/panier/utilisateur/${idUser}/magasin/${idShop}`,
@@ -547,5 +548,26 @@ export const getSlot = async () => {
     } catch (err) {
         console.error("Erreur lors du fetch des produits :", err);
         return [];
+    }
+};
+
+export const loginUserA = async (idMagasin) => {
+    try {
+        const response = await fetch(`${BASEURL}/utilisateur-anonyme/${idMagasin}`, {  
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error("Identifiants incorrects");
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (err) {
+        console.error("Erreur de login :", err);
+        throw err;
     }
 };

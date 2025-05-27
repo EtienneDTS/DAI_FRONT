@@ -29,6 +29,7 @@ export const resetCart = async () => {
     cartIcon.addEventListener("click", () => {
         cartPage.classList.toggle("open");
     });
+    cartPage.classList.remove("open")
 };
 
 export const resetListNames = async () => {
