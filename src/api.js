@@ -339,7 +339,7 @@ export const addProductToCart = async (idUser, idProduit, quantity) => {
 };
 
 export async function getUserAgeStats() {
-    const response = await fetch("http://localhost:8081/utilisateurs/ages", {
+    const response = await fetch(`${BASEURL}/utilisateurs/ages`, {
         credentials: "include",
     });
 
@@ -351,12 +351,12 @@ export async function getUserAgeStats() {
 }
 
 export async function fetchAllCatalogProducts() {
-    const res = await fetch("http://localhost:8081/api/produits");
+    const res = await fetch(`${BASEURL}/produits`);
     return await res.json();
 }
 
 export async function fetchAllCategoryNames() {
-    const res = await fetch("http://localhost:8081/categories");
+    const res = await fetch(`${BASEURL}/categories`);
     return await res.json();
 }
 
@@ -435,19 +435,15 @@ export const modifyShop = async (idUser, newIdShop) => {
     }
 };
 
-export const order = async (idCart, idDate, idSlot) => {
+export const order = async (idMagasin, idPanier, date, idSlot) => {
     try {
         const response = await fetch(
-            `${BASEURL}/panier/${idCart}/passer-commande`,
+            `${BASEURL}/panier/passer-commande/${idMagasin}/${idSlot}?idPanier=${idPanier}&dateC=${date}`,
             {
-                method: "PUT",
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    date: date,
-                    creneaux: slot,
-                }),
             }
         );
         if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
@@ -588,6 +584,27 @@ export const getRecommendedProducts = async (idUser) => {
         return data
     } catch (err) {
         console.error("Erreur lors du fetch des produits :", err);
+        return [];
+    }
+};
+
+export const getMagasinDispo = async (idShop, idPanier) => {
+    
+    try {
+        const response = await fetch(
+            `${BASEURL}/magasins/${idShop}/panier/${idPanier}/indisponible`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
+        const data = await response.json();
+        return  data;    
+    } catch (err) {
+        console.error("Erreur lors du fetch du produit :", err);
         return [];
     }
 };

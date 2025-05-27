@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         body.appendChild(userOption(user, magasins));
         login.addEventListener("click", () => {
-            if (user?.email?.includes("pickandgo.temp")?.email?.includes("pickandgo.temp")) {
+            if (user?.email?.includes("pickandgo.temp")) {
                 window.location.href = "/login"
             }
 
@@ -126,6 +126,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const user = JSON.parse(localStorage.getItem("user"));
         const deals = await getDeals();
         const products = await getProducts();
+        
         const prod = await getRecommendedProducts(user?.id)
         const scrollStep = 250;
 

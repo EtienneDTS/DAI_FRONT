@@ -1,7 +1,9 @@
-import { modifyCartProduct, deleteProductFromCart, deleteCart } from "../api";
+import { modifyCartProduct, deleteProductFromCart, deleteCart, order, getMagasinDispo } from "../api";
 import { resetCart } from "../utils";
 
 const findReplacement = (product) => {
+  
+  
   const allProducts = JSON.parse(localStorage.getItem("allProducts") || "[]");
   return allProducts.find(
     (p) =>
@@ -12,8 +14,11 @@ const findReplacement = (product) => {
 };
 
 export const cart = (products, idPanier, dispo = {}) => {
+  
   const wrapper = document.createElement("div");
   wrapper.className = "cart-page open";
+
+  console.log(products, "produits de panier")
 
   let selectedDate = null;
   let selectedSlot = null;
@@ -188,9 +193,18 @@ export const cart = (products, idPanier, dispo = {}) => {
       });
     });
 
-    orderButton?.addEventListener("click", () => {
+    orderButton?.addEventListener("click", async () => {
       console.log("Créneau choisi:", selectedDate, selectedSlot);
-      window.location.href = "/";
+      const user = JSON.parse(localStorage.getItem("user"))
+      console.log(user.magasin.id, idPanier, selectedDate, parseInt(selectedSlot))
+      
+      const ord = await order(user.magasin.id, idPanier, selectedDate, selectedSlot)
+      console.log(await getMagasinDispo(user.magasin.id, idPanier), "magdispo")
+      //await deleteCart(idPanier)
+      //resetCart()
+      
+
+      
     });
   }
 
