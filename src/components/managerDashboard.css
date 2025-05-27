@@ -157,3 +157,48 @@
   border-radius: 6px;
   cursor: pointer;
 }
+
+/* ========== Responsive Styles ========== */
+@media (max-width: 768px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: center;
+  }
+
+  .dashboard-user {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .dashboard-user h2,
+  .dashboard-user p {
+    text-align: center;
+  }
+
+  .upload-box,
+  .restock-form,
+  .top-ventes,
+  .client-profile,
+  .stock-dashboard {
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+
+  .restock-form form {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .restock-form select,
+  .restock-form input,
+  .restock-form button {
+    width: 100%;
+  }
+
+  .chart-wrapper {
+    max-width: 100%;
+  }
+}
+

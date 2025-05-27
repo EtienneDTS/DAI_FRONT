@@ -11,7 +11,7 @@ export function stockDashboard(previsions) {
     const select = document.createElement("select");
 select.multiple = true;
 
-// ⬇ On récupère les catégories de l'API
+
 getCategories()
   .then(categories => {
     select.innerHTML = `
@@ -120,7 +120,15 @@ getCategories()
         });
     }
 
-    renderTable(previsions);          
-    container.appendChild(table);      
+    renderTable(previsions);  
+
+    const scrollWrapper = document.createElement("div");
+    scrollWrapper.classList.add("table-scroll");
+    scrollWrapper.appendChild(table);
+
+container.appendChild(scrollWrapper);
+
+    
+    
     return container;                  
 }

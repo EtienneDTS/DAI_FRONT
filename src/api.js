@@ -341,7 +341,7 @@ export const addProductToCart = async (idUser, idProduit, quantity) => {
 };
 
 export async function getUserAgeStats() {
-  const response = await fetch("http://localhost:8081/utilisateurs/ages", {
+  const response = await fetch("http://localhost:8081/api/utilisateurs/ages", {
     credentials: "include", 
   });
 
@@ -492,3 +492,28 @@ export const endCommande = async (idCart) => {
         return [];
     }
 };
+
+
+
+
+export const getRecommendedProducts = async (idUser) => {
+    console.log(idUser, "idUser dans getRecommendedProducts");
+    try {
+        const response = await fetch(`http://localhost:8081/api/produits/recommandations/${idUser}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
+        const data = await response.json();
+        console.log(data, "datefssfa");
+        return data
+    } catch (err) {
+        console.error("Erreur lors du fetch des produits :", err);
+        return [];
+    }
+};
+
+
+

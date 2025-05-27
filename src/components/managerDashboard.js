@@ -1,7 +1,6 @@
 import { getStockPrevision } from "../apis/getStokPrevision";
 import { stockDashboard } from "./stockDashboard";
 import { getUserAgeStats } from "../api.js";
-import { getProducts } from "../api.js";
 import { fetchAllCatalogProducts } from "../api";
 
 import { getCategories } from "../api";
@@ -36,15 +35,12 @@ export async function managerDashboard() {
       <img src="/person-fill-x.svg" alt="avatar" class="avatar">
       <div>
         <h2>${user.nom} ${user.prenom}</h2>
-        <p>Mon Supermarché</p>
+        <p>Gérant Supermarché</p>
       </div>
     </div>
   `;
   container.appendChild(header);
 
-  document.querySelector(".avatar").addEventListener("click", ()=> {
-    document.querySelector(".user-menu").classList.toggle("show");
-  })
   const uploadBox = document.createElement("div");
   uploadBox.classList.add("upload-box");
 
@@ -166,81 +162,7 @@ export async function managerDashboard() {
   const stockSection = stockDashboard(previsions);
   container.appendChild(stockSection);
 
-  
- //Restock des produits du magasin Borderouge:
 
- 
-function createRestockForm(produits) {
-  const formContainer = document.createElement("div");
-  formContainer.classList.add("restock-form");
-
-  const title = document.createElement("h3");
-  title.textContent = "Refaire le stock (Borderouge)   ";
-  formContainer.appendChild(title);
-
-  const form = document.createElement("form");
-
-  const select = document.createElement("select");
-  select.name = "produit";
-  produits.forEach(p => {
-    const option = document.createElement("option");
-    option.value = p.id;
-    option.textContent = `${p.nom} (${p.marque})`;
-    select.appendChild(option);
-  });
-
-  const qtyInput = document.createElement("input");
-  qtyInput.type = "number";
-  qtyInput.min = 1;
-  qtyInput.placeholder = "Quantité à ajouter";
-  qtyInput.required = true;
-
-  const submit = document.createElement("button");
-  submit.type = "submit";
-  submit.textContent = "Ajouter au stock";
-
-  
-
-  form.appendChild(select);
-  form.appendChild(qtyInput);
-  form.appendChild(submit);
-  formContainer.appendChild(form);
-
-  formContainer.style.display = "flex";
-  formContainer.style.alignItems = "center";
-  formContainer.style.gap = "5px";
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const idProduit = select.value;
-    const quantite = parseInt(qtyInput.value);
-
-    const body = {
-      idProduit: parseInt(idProduit),
-      quantiteS: quantite
-    };
-
-    try {
-      const res = await fetch("http://localhost:8081/api/restocker/6/stock/ajouter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body)
-      });
-
-      const text = await res.text();
-      alert(text);
-    } catch (err) {
-      console.error("Erreur ajout stock", err);
-      alert("Une erreur est survenue");
-    }
-  });
-
-  return formContainer;
-}
-
-const produitsCatalogue = await getProducts(); // ou ton API existante
-const restockSection = createRestockForm(produitsCatalogue);
-container.appendChild(restockSection);
 
 
 // Arrivage nouveux produits
@@ -250,7 +172,7 @@ async function createFullRestockForm() {
   container.classList.add("restock-form");
 
   const title = document.createElement("h3");
-  title.textContent = "Ajouter un produit existant au stock";
+  title.textContent = "Refaire l'approvisionnement des stocks";
   container.appendChild(title);
 
   // --- Sélecteur de catégories ---
@@ -258,6 +180,11 @@ async function createFullRestockForm() {
   selectCategorie.innerHTML = `<option value="">-- Choisir une catégorie --</option>`;
 
   const categories = await getCategories(); // appel à /categories
+  const categoryMap = categories.reduce((acc, nom, index) => {
+    acc[index + 1] = nom; // si idCate commence à 1
+    return acc;
+  }, {});
+
   categories.forEach(cat => {
     const option = document.createElement("option");
     option.value = cat;
@@ -287,17 +214,17 @@ async function createFullRestockForm() {
   container.style.alignItems = "center";
   container.style.gap = "15px";
 
-
   // --- Mise à jour des produits lors du changement de catégorie ---
   selectCategorie.addEventListener("change", async () => {
     const selectedCat = selectCategorie.value;
     const allProduits = await fetchAllCatalogProducts();
 
-    const filtres = allProduits.filter(p => {
-  console.log("Comparaison :", p.categorie, "==", selectedCat);
-  return p.categorie === selectedCat;
-  });
+    // Ajouter le nom de la catégorie à chaque produit
+    allProduits.forEach(p => {
+      p.nomCategorie = categoryMap[p.idCate];
+    });
 
+    const filtres = allProduits.filter(p => p.nomCategorie === selectedCat);
 
     selectProduit.innerHTML = `<option value="">-- Choisir un produit --</option>`;
     filtres.forEach(p => {
@@ -332,8 +259,6 @@ async function createFullRestockForm() {
       console.error(e);
     }
   });
-
-
 
   return container;
 }

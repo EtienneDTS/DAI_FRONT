@@ -5,12 +5,16 @@ import { cart } from "./components/cart";
 import { lists } from "./components/lists";
 import { productDetail } from "./components/productDetail";
 import { productSearch } from "./components/productSearch";
-import { getProducts, getOneProduct, getLists } from "./api";
+import { getProducts, getOneProduct, getLists, getRecommendedProducts } from "./api";
 import { userOption } from "./components/userOption";
 import { notesPage } from "./components/notesPage";
 import { resetCart, resetList, resetListNames } from "./utils";
 import { managerDashboard } from "./components/managerDashboard";
 import { OrderPage } from "./components/orderPage";
+
+
+
+
 
 let userRole;
 document.addEventListener("DOMContentLoaded", async () => {
@@ -73,7 +77,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // HOME
     if (path === "/") {
+        const user = JSON.parse(localStorage.getItem("user"));
         const products = await getProducts();
+        const prod = await getRecommendedProducts(user?.id);
         const scrollStep = 250;
         const exploreCarousel = "exploreCarousel";
         const exploreBtn = "expoloreBtn";
@@ -114,7 +120,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             exploreTrack.appendChild(card(element));
         });
 
-        products.forEach((element) => {
+        console.log(prod, "prod");
+        console.log("User ID:", user.id);
+
+
+        prod.forEach((element) => {
             recommandationsTrack.appendChild(card(element));
         });
         resetListNames();
@@ -129,7 +139,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // PRODUCT DETAIL
     else if (path.startsWith("/product")) {
-        const recommandationsProduct = await getProducts();
+        const recommandationsProduct = await getRecommendedProducts("userId");
 
         const productId = path.split("/")[2];
 
@@ -184,6 +194,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (nav) nav.style.display = "none";
         App.innerHTML = "";
         App.appendChild(await managerDashboard());
+        document.querySelector(".avatar").addEventListener("click", ()=> {
+            document.querySelector(".user-menu").classList.toggle("show");
+        })
     }
 
     //ORDERS
