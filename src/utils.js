@@ -1,4 +1,10 @@
-import { getLists, getCart, addProductToList, getSlot } from "./api";
+import {
+    getLists,
+    getCart,
+    addProductToList,
+    getSlot,
+    getMagasinDispo,
+} from "./api";
 import { lists } from "./components/lists";
 import { cart } from "./components/cart";
 
@@ -26,7 +32,16 @@ export const resetCart = async () => {
     const cartData = await getCart(userId, userShop);
 
     let cartPage = document.querySelector(".cart-page");
-    cartPage.replaceWith(cart(cartData.lignes, cartData.idPanier, dispo));
+    console.log(user, "ici user");
+    console.log(user.magasin.id, user.panierActifId);
+    const fullMagProd = await getMagasinDispo(
+        user.magasin.id,
+        user.panierActifId
+    );
+    console.log(fullMagProd, "full");
+    cartPage.replaceWith(
+        cart(cartData.lignes, cartData.idPanier, dispo, fullMagProd)
+    );
     cartPage = document.querySelector(".cart-page");
     const cartIcon = document.querySelector(".cart-container");
     cartIcon.addEventListener("click", () => {

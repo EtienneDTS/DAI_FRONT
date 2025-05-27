@@ -2,12 +2,14 @@ import {
     modifyCartProduct,
     deleteProductFromCart,
     deleteCart,
-    order
+    order,
 } from "../api";
 import { resetCart } from "../utils";
+import { confirmOrder } from "./confirm";
 
 const findReplacements = (product) => {
     const allProducts = JSON.parse(localStorage.getItem("allProducts") || "[]");
+    
     return allProducts
         .filter(
             (p) =>
@@ -20,6 +22,7 @@ const findReplacements = (product) => {
 
 export const cart = (products, idPanier, dispo = {}, shopDispo = []) => {
     const wrapper = document.createElement("div");
+    const hasUnavailable = products.some((p) => !p.dispo);
     wrapper.className = "cart-page open";
 
     let selectedDate = null;
@@ -51,6 +54,12 @@ export const cart = (products, idPanier, dispo = {}, shopDispo = []) => {
                 0
             )
             .toFixed(2);
+
+        const allShops = JSON.parse(localStorage.getItem("shops")) || [];
+        const availableShops = shopDispo.map((s) => s.idM);
+        const suggestions = allShops.filter((s) =>
+            availableShops.includes(s.id)
+        );
 
         wrapper.innerHTML = `
       <h2>Mon panier</h2>
@@ -120,6 +129,21 @@ export const cart = (products, idPanier, dispo = {}, shopDispo = []) => {
         }
       </div>
       ${renderSlotSelector()}
+      ${
+          hasUnavailable && suggestions.length > 0
+              ? `<div class="shop-suggestions">
+                  <h3>Vos produits sont disponibles dans les magasins suivants :</h3>
+                  <ul>
+                    ${suggestions
+                        .map(
+                            (s) =>
+                                `<li class="shop-switch" data-id="${s.id}" style="cursor:pointer">${s.nomM} (${s.adresseM})</li>`
+                        )
+                        .join("")}
+                  </ul>
+                </div>`
+              : ""
+      }
       ${
           products?.length
               ? `<div class="cart-total">Total : <strong>${total} €</strong></div><button class="order" disabled>Payer</button>`
@@ -222,9 +246,30 @@ export const cart = (products, idPanier, dispo = {}, shopDispo = []) => {
             if (selectedSlot) orderButton.disabled = false;
         });
 
+        wrapper.querySelectorAll(".shop-switch").forEach((li) => {
+            li.addEventListener("click", () => {
+                const shops = JSON.parse(localStorage.getItem("shops"));
+                const selectedShop = shops.find((s) => s.id == li.dataset.id);
+                const user = JSON.parse(localStorage.getItem("user"));
+                user.magasin = selectedShop;
+                localStorage.setItem("user", JSON.stringify(user));
+                window.location.reload();
+            });
+        });
+
         orderButton?.addEventListener("click", async () => {
             const user = JSON.parse(localStorage.getItem("user"));
-            await order(user.magasin.id, idPanier, selectedDate, selectedSlot);
+            const ord = await order(
+                user.magasin.id,
+                idPanier,
+                selectedDate,
+                selectedSlot
+            );
+            await deleteCart(idPanier);
+            await resetCart();
+            const app = document.querySelector("#App");
+            app.innerHTML = "";
+            app.appendChild(confirmOrder(ord));
         });
     }
 

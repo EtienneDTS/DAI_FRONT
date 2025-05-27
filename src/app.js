@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const login = document.querySelector(".login");
     const loginText = document.querySelector(".login-text");
     const listIcon = document.querySelector(".list-container");
-    
+
     const prods = await getProducts();
     localStorage.setItem("allProducts", JSON.stringify(prods));
 
@@ -56,6 +56,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     logo.addEventListener("click", () => (window.location.href = "/"));
     const magasins = await getShops();
+    localStorage.setItem("shops", JSON.stringify(magasins));
     if (localStorage?.getItem("user") !== null) {
         const user = JSON.parse(localStorage.getItem("user"));
         user?.email?.includes("pickandgo.temp")
