@@ -1,4 +1,4 @@
-import { modifyCartProduct, deleteProductFromCart, deleteCart, getSlot } from "../api";
+import { modifyCartProduct, deleteProductFromCart, deleteCart } from "../api";
 import { resetCart } from "../utils";
 
 const findReplacement = (product) => {
@@ -11,12 +11,32 @@ const findReplacement = (product) => {
   );
 };
 
-export const cart = (products, idPanier, dispo) => {
+export const cart = (products, idPanier, dispo = {}) => {
   const wrapper = document.createElement("div");
   wrapper.className = "cart-page open";
 
+  let selectedDate = null;
+  let selectedSlot = null;
 
-  
+  function renderSlotSelector() {
+    const dates = Object.keys(dispo || {}).sort();
+    const slotHTML = `
+      <div class="slot-selector">
+        <label for="date-select">Choisir un jour :</label>
+        <select id="date-select">
+          <option value="">-- Sélectionner une date --</option>
+          ${dates
+            .map((date) => `<option value="${date}">${date}</option>`) 
+            .join("")}
+        </select>
+        <label for="slot-select">Choisir un créneau :</label>
+        <select id="slot-select" disabled>
+          <option value="">-- Sélectionner une heure --</option>
+        </select>
+      </div>
+    `;
+    return slotHTML;
+  }
 
   function renderCart() {
     const total = products.reduce(
@@ -41,12 +61,11 @@ export const cart = (products, idPanier, dispo) => {
                     <p>${p.produit.prixUnitaire.toFixed(2)} €</p>
                     ${
                       p.dispo
-                        ? `
-                    <div class="quantity-controls">
-                      <button class="decrease">-</button>
-                      <span class="qty">${p.quantite}</span>
-                      <button class="increase">+</button>
-                    </div>`
+                        ? `<div class="quantity-controls">
+                            <button class="decrease">-</button>
+                            <span class="qty">${p.quantite}</span>
+                            <button class="increase">+</button>
+                          </div>`
                         : ""
                     }
                   </div>
@@ -54,33 +73,54 @@ export const cart = (products, idPanier, dispo) => {
                 </div>
                 ${
                   replacement
-                    ? `
-                  <div class="replacement-suggestion" data-replace-id="${replacement.id}" data-remove-id="${p.produit.id}">
-                    <p>Produit de remplacement :</p>
-                    <div class="replacement-product">
-                      <img src="${replacement.urlImage}" alt="${replacement.nom}">
-                      <div class="item-info">
-                        <h4>${replacement.nom}</h4>
-                        <p>${replacement.prixUnitaire.toFixed(2)} €</p>
-                      </div>
-                    </div>
-                  </div>
-                `
+                    ? `<div class="replacement-suggestion" data-replace-id="${replacement.id}" data-remove-id="${p.produit.id}">
+                        <p>Produit de remplacement :</p>
+                        <div class="replacement-product">
+                          <img src="${replacement.urlImage}" alt="${replacement.nom}">
+                          <div class="item-info">
+                            <h4>${replacement.nom}</h4>
+                            <p>${replacement.prixUnitaire.toFixed(2)} €</p>
+                          </div>
+                        </div>
+                      </div>`
                     : ""
-                }
-              `;
+                }`;
               }).join("")
         }
       </div>
+      ${renderSlotSelector()}
       ${
         products?.length
           ? `<div class="cart-total">Total : <strong>${total} €</strong></div>
-             <button class="order">Payer</button>`
+             <button class="order" disabled>Payer</button>`
           : ""
       }
     `;
 
-    // Suppression produit
+    const dateSelect = wrapper.querySelector("#date-select");
+    const slotSelect = wrapper.querySelector("#slot-select");
+    const orderButton = wrapper.querySelector(".order");
+
+    dateSelect?.addEventListener("change", () => {
+      selectedDate = dateSelect.value;
+      const slots = dispo[selectedDate] || [];
+
+      slotSelect.innerHTML = `<option value="">-- Sélectionner une heure --</option>`;
+      slots.forEach((s) => {
+        const option = document.createElement("option");
+        option.value = s.id;
+        option.textContent = s.nom;
+        slotSelect.appendChild(option);
+      });
+
+      slotSelect.disabled = false;
+    });
+
+    slotSelect?.addEventListener("change", () => {
+      selectedSlot = slotSelect.value;
+      if (selectedSlot) orderButton.disabled = false;
+    });
+
     wrapper.querySelectorAll(".remove-from-cart").forEach((btn) => {
       btn.addEventListener("click", async () => {
         const idProduct = parseInt(btn.closest(".cart-item").dataset.id);
@@ -93,7 +133,6 @@ export const cart = (products, idPanier, dispo) => {
       });
     });
 
-    // Quantité +
     wrapper.querySelectorAll(".increase").forEach((btn) => {
       btn.addEventListener("click", async () => {
         const idProduct = parseInt(btn.closest(".cart-item").dataset.id);
@@ -104,7 +143,6 @@ export const cart = (products, idPanier, dispo) => {
       });
     });
 
-    // Quantité -
     wrapper.querySelectorAll(".decrease").forEach((btn) => {
       btn.addEventListener("click", async () => {
         const idProduct = parseInt(btn.closest(".cart-item").dataset.id);
@@ -121,7 +159,6 @@ export const cart = (products, idPanier, dispo) => {
       });
     });
 
-    // Vider le panier
     wrapper.querySelector(".empty-cart")?.addEventListener("click", async () => {
       if (confirm("Voulez-vous supprimer tous les produits de votre panier ?")) {
         await deleteCart(idPanier);
@@ -129,12 +166,6 @@ export const cart = (products, idPanier, dispo) => {
       }
     });
 
-    // Passer commande
-    wrapper.querySelector(".order")?.addEventListener("click", () => {
-      window.location.href = "/";
-    });
-
-    // Produit de remplacement
     wrapper.querySelectorAll(".replacement-suggestion").forEach((el) => {
       el.addEventListener("click", async () => {
         const replacementId = parseInt(el.dataset.replaceId);
@@ -155,6 +186,11 @@ export const cart = (products, idPanier, dispo) => {
 
         renderCart();
       });
+    });
+
+    orderButton?.addEventListener("click", () => {
+      console.log("Créneau choisi:", selectedDate, selectedSlot);
+      window.location.href = "/";
     });
   }
 
