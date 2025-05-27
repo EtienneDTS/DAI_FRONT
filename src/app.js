@@ -12,7 +12,8 @@ import {
     getDeals,
     getShops,
     getOrders,
-    loginUserA
+    loginUserA,
+    getRecommendedProducts
 } from "./api";
 import { userOption } from "./components/userOption";
 import { notesPage } from "./components/notesPage";
@@ -62,7 +63,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (user?.email?.includes("pickandgo.temp")?.email?.includes("pickandgo.temp")) {
                 window.location.href = "/login"
             }
-            
+
             document.querySelector(".user-menu").classList.toggle("show");
         });
         document.querySelector("#loginIMG").src = "/person-fill-check.svg";
@@ -78,7 +79,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             window.location.href = "/login";
         });
         const user = JSON.parse(localStorage.getItem("user"));
-        console.log(user, "user");
+     
         userRole = user?.role;
 
         listIcon.style.display = "none";
@@ -122,8 +123,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // HOME
     if (path === "/") {
+        const user = JSON.parse(localStorage.getItem("user"));
         const deals = await getDeals();
         const products = await getProducts();
+        const prod = await getRecommendedProducts(user?.id)
         const scrollStep = 250;
 
         App.innerHTML = `
@@ -176,6 +179,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         products.forEach((product) => {
             exploreTrackEl.appendChild(card(product));
+            
+        });
+
+        prod.forEach((product) => {
+          
             recoTrackEl.appendChild(card(product));
         });
 
@@ -191,7 +199,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // PRODUCT DETAIL
     else if (path.startsWith("/product")) {
-        const recommandationsProduct = await getProducts();
+        const user = JSON.parse(localStorage.getItem("user"));
+        const recommandationsProduct = await getRecommendedProducts(user.id);
 
         const productId = path.split("/")[2];
 
@@ -246,6 +255,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (nav) nav.style.display = "none";
         App.innerHTML = "";
         App.appendChild(await managerDashboard());
+        document.querySelector(".avatar").addEventListener("click", ()=> {
+            document.querySelector(".user-menu").classList.toggle("show")
+        })
     }
 
     //ORDERS

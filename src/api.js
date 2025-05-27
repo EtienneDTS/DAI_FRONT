@@ -435,7 +435,7 @@ export const modifyShop = async (idUser, newIdShop) => {
     }
 };
 
-export const order = async (idCart, date, slot) => {
+export const order = async (idCart, idDate, idSlot) => {
     try {
         const response = await fetch(
             `${BASEURL}/panier/${idCart}/passer-commande`,
@@ -570,5 +570,24 @@ export const loginUserA = async (idMagasin) => {
     } catch (err) {
         console.error("Erreur de login :", err);
         throw err;
+    }
+};
+
+export const getRecommendedProducts = async (idUser) => {
+    console.log(idUser, "idUser dans getRecommendedProducts");
+    try {
+        const response = await fetch(`http://localhost:8081/api/produits/recommandations/${idUser}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
+        const data = await response.json();
+        console.log(data, "datefssfa");
+        return data
+    } catch (err) {
+        console.error("Erreur lors du fetch des produits :", err);
+        return [];
     }
 };
