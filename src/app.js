@@ -239,8 +239,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     //ORDERS
     else if (path === "/orders") {
         const user = JSON.parse(localStorage.getItem("user"));
+        console.log(user, "user")
+        const ordersData = await getOrders(user.magasin.id)
+        
         App.innerHTML = "";
-        const ordersData = await getOrders(user.magasin.id);
+        //const ordersData = await getOrders(user.magasin.id);
         console.log(ordersData, "ordersDAta");
         App.appendChild(OrderPage(ordersData));
     }

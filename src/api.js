@@ -496,6 +496,7 @@ export const endCommande = async (idCart) => {
 };
 
 export const getOrders = async (idShop) => {
+    
     try {
         const response = await fetch(
             `${BASEURL}/panier/magasin/${idShop}/commandes`,
