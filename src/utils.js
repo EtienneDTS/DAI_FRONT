@@ -1,4 +1,4 @@
-import { getLists, getCart, addProductToList } from "./api";
+import { getLists, getCart, addProductToList, getSlot } from "./api";
 import { lists } from "./components/lists";
 import { cart } from "./components/cart";
 
@@ -17,19 +17,25 @@ export const resetList = async () => {
 };
 
 export const resetCart = async () => {
+    
     const user = JSON.parse(localStorage.getItem("user"));
     const userId = user?.id;
     const userShop = user?.magasin?.id;
     const cartData = await getCart(userId, userShop);
-    console.log(cartData, "cartData");
+
+    console.log(userShop, "userShop")
+    const dispo = await getSlot(userShop);
+    console.log(dispo, "les dispos")
+   
     let cartPage = document.querySelector(".cart-page");
-    cartPage.replaceWith(cart(cartData.lignes, cartData.idPanier));
+    cartPage.replaceWith(cart(cartData.lignes, cartData.idPanier, dispo));
     cartPage = document.querySelector(".cart-page");
     const cartIcon = document.querySelector(".cart-container");
     cartIcon.addEventListener("click", () => {
         cartPage.classList.toggle("open");
     });
     cartPage.classList.remove("open")
+    
 };
 
 export const resetListNames = async () => {

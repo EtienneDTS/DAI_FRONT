@@ -1,7 +1,6 @@
-import { modifyCartProduct, deleteProductFromCart, deleteCart } from "../api";
+import { modifyCartProduct, deleteProductFromCart, deleteCart, getSlot } from "../api";
 import { resetCart } from "../utils";
 
-// Suppose que tous les produits sont stockés dans localStorage
 const findReplacement = (product) => {
   const allProducts = JSON.parse(localStorage.getItem("allProducts") || "[]");
   return allProducts.find(
@@ -12,9 +11,12 @@ const findReplacement = (product) => {
   );
 };
 
-export const cart = (products, idPanier) => {
+export const cart = (products, idPanier, dispo) => {
   const wrapper = document.createElement("div");
   wrapper.className = "cart-page open";
+
+
+  
 
   function renderCart() {
     const total = products.reduce(
@@ -35,9 +37,7 @@ export const cart = (products, idPanier) => {
                 <div class="cart-item" data-id="${p.produit.id}">
                   <img src="${p.produit.urlImage}" alt="${p.produit.nom}">
                   <div class="item-info">
-                    <h4>${p.produit.nom} ${
-                      !p.dispo ? "<span class='unavailable'>(indisponible)</span>" : ""
-                    }</h4>
+                    <h4>${p.produit.nom} ${!p.dispo ? "<span class='unavailable'>(indisponible)</span>" : ""}</h4>
                     <p>${p.produit.prixUnitaire.toFixed(2)} €</p>
                     ${
                       p.dispo
@@ -80,7 +80,7 @@ export const cart = (products, idPanier) => {
       }
     `;
 
-    // Boutons classiques
+    // Suppression produit
     wrapper.querySelectorAll(".remove-from-cart").forEach((btn) => {
       btn.addEventListener("click", async () => {
         const idProduct = parseInt(btn.closest(".cart-item").dataset.id);
@@ -93,26 +93,26 @@ export const cart = (products, idPanier) => {
       });
     });
 
+    // Quantité +
     wrapper.querySelectorAll(".increase").forEach((btn) => {
       btn.addEventListener("click", async () => {
         const idProduct = parseInt(btn.closest(".cart-item").dataset.id);
         const product = products.find((p) => p.produit.id === idProduct);
-        const newQuantity = product.quantite + 1;
-        product.quantite = newQuantity;
+        product.quantite++;
         renderCart();
-        await modifyCartProduct(idPanier, idProduct, newQuantity);
+        await modifyCartProduct(idPanier, idProduct, product.quantite);
       });
     });
 
+    // Quantité -
     wrapper.querySelectorAll(".decrease").forEach((btn) => {
       btn.addEventListener("click", async () => {
         const idProduct = parseInt(btn.closest(".cart-item").dataset.id);
         const product = products.find((p) => p.produit.id === idProduct);
         if (product.quantite > 1) {
-          const newQuantity = product.quantite - 1;
-          product.quantite = newQuantity;
+          product.quantite--;
           renderCart();
-          await modifyCartProduct(idPanier, idProduct, newQuantity);
+          await modifyCartProduct(idPanier, idProduct, product.quantite);
         } else {
           products.splice(products.indexOf(product), 1);
           renderCart();
@@ -121,6 +121,7 @@ export const cart = (products, idPanier) => {
       });
     });
 
+    // Vider le panier
     wrapper.querySelector(".empty-cart")?.addEventListener("click", async () => {
       if (confirm("Voulez-vous supprimer tous les produits de votre panier ?")) {
         await deleteCart(idPanier);
@@ -128,10 +129,12 @@ export const cart = (products, idPanier) => {
       }
     });
 
+    // Passer commande
     wrapper.querySelector(".order")?.addEventListener("click", () => {
       window.location.href = "/";
     });
 
+    // Produit de remplacement
     wrapper.querySelectorAll(".replacement-suggestion").forEach((el) => {
       el.addEventListener("click", async () => {
         const replacementId = parseInt(el.dataset.replaceId);
@@ -140,7 +143,7 @@ export const cart = (products, idPanier) => {
         const replacement = allProducts.find((p) => p.id === replacementId);
 
         await deleteProductFromCart(idPanier, toRemoveId);
-        await modifyCartProduct(idPanier, replacementId, 1); // ou createProductInCart()
+        await modifyCartProduct(idPanier, replacementId, 1);
 
         const index = products.findIndex((p) => p.produit.id === toRemoveId);
         products.splice(index, 1, {

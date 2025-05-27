@@ -39,6 +39,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     let listwrapper = lists([]);
     const cartWrapper = cart([]);
+    cartWrapper.classList.remove("open")
     body.appendChild(cartWrapper);
     body.appendChild(listwrapper);
     
@@ -52,17 +53,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     logo.addEventListener("click", () => (window.location.href = "/"));
     const magasins = await getShops();
     if (localStorage?.getItem("user") !== null) {
-        console.log(!localStorage?.getItem("user")?.email?.includes("pickandgo.temp"), "voir resultat")
         const user = JSON.parse(localStorage.getItem("user"));
-      
-        localStorage?.getItem("user")?.email?.includes("pickandgo.temp") ? loginText.textContent = "connexion" : loginText.textContent = user?.nom;
+        user?.email?.includes("pickandgo.temp") ? loginText.textContent = "connexion" : loginText.textContent = user.nom ;
         userRole = user?.role;
 
         body.appendChild(userOption(user, magasins));
         login.addEventListener("click", () => {
-            if (!localStorage?.getItem("user")?.email?.includes("pickandgo.temp")) {
+            if (user?.email?.includes("pickandgo.temp")?.email?.includes("pickandgo.temp")) {
                 window.location.href = "/login"
             }
+            
             document.querySelector(".user-menu").classList.toggle("show");
         });
         document.querySelector("#loginIMG").src = "/person-fill-check.svg";

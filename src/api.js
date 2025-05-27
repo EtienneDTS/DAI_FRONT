@@ -534,19 +534,20 @@ export const getDeals = async () => {
     }
 };
 
-export const getSlot = async () => {
+export const getSlot = async (idShop) => {
     try {
-        const response = await fetch(`${BASEURL}/choisir-creneaux`, {
+        
+        const response = await fetch(`${BASEURL}/panier/disponibilites/${idShop}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
-        });
+        }); 
         if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
         const data = await response.json();
-        return Array.isArray(data) ? data : [];
+        return data
     } catch (err) {
-        console.error("Erreur lors du fetch des produits :", err);
+        console.error("Erreur lors du fetch des creneaux :", err);
         return [];
     }
 };
