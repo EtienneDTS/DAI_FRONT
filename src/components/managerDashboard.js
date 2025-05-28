@@ -2,7 +2,7 @@ import { getStockPrevision } from "../apis/getStokPrevision";
 import { stockDashboard } from "./stockDashboard";
 import { getUserAgeStats } from "../api.js";
 import { fetchAllCatalogProducts } from "../api";
-
+import { getProducts } from "../api";
 import { getCategories } from "../api";
 
 
@@ -274,6 +274,84 @@ container.appendChild(fullRestockForm);
       ${topVentesMock.map(p => `<li>${p.nom} — ${p.quantite} ventes</li>`).join("")}
     </ul>
   `;
+  //===================
+const settingsSection = document.createElement("div");
+settingsSection.classList.add("reco-settings");
+settingsSection.innerHTML = `<h3>Paramétrer les recommandations</h3>`;
+
+// === 1. Champ nombre de produits à afficher
+const labelNb = document.createElement("label");
+labelNb.textContent = "Nombre de produits à recommander : ";
+
+const inputNb = document.createElement("input");
+inputNb.type = "number";
+inputNb.min = 1;
+inputNb.max = 20;
+inputNb.value = localStorage.getItem("nbReco") || 5;
+
+labelNb.appendChild(inputNb);
+settingsSection.appendChild(labelNb);
+
+// === 2. Sélecteur de marque
+const labelMarque = document.createElement("label");
+labelMarque.textContent = "Filtrer par marque : ";
+
+const selectMarque = document.createElement("select");
+selectMarque.innerHTML = `<option value="">-- Toutes --</option>`;
+
+const allProducts = await getProducts();
+const marquesUniques = [...new Set(allProducts.map(p => p.marque))];
+
+marquesUniques.forEach((marque) => {
+  const option = document.createElement("option");
+  option.value = marque;
+  option.textContent = marque;
+  selectMarque.appendChild(option);
+});
+
+selectMarque.value = localStorage.getItem("filtreMarque") || "";
+labelMarque.appendChild(selectMarque);
+settingsSection.appendChild(labelMarque);
+
+// === 3. Sélecteur Bio
+const labelBio = document.createElement("label");
+labelBio.textContent = "Filtrer par produits bio : ";
+
+const selectBio = document.createElement("select");
+selectBio.innerHTML = `
+  <option value="">-- Tous --</option>
+  <option value="true">Oui</option>
+  <option value="false">Non</option>
+`;
+
+selectBio.value = localStorage.getItem("filtreBio") || "";
+labelBio.appendChild(selectBio);
+settingsSection.appendChild(labelBio);
+
+// === 4. Bouton sauvegarder
+const saveBtn = document.createElement("button");
+saveBtn.textContent = "Enregistrer";
+saveBtn.classList.add("save-btn");
+
+saveBtn.addEventListener("click", () => {
+  const nb = parseInt(inputNb.value);
+  const marque = selectMarque.value;
+  const bio = selectBio.value;
+
+  localStorage.setItem("nbReco", nb);
+  localStorage.setItem("filtreMarque", marque);
+  localStorage.setItem("filtreBio", bio);
+
+  alert("Paramètres de recommandations enregistrés !");
+});
+
+settingsSection.appendChild(saveBtn);
+
+// === Ajout à la page
+container.appendChild(settingsSection);
+
+
+  
   container.appendChild(topVentesBox);
 
   // ===== 5. Profil client (chart)

@@ -202,3 +202,75 @@
   }
 }
 
+.reco-settings {
+  margin-top: 30px;
+  padding: 25px 30px;
+  background: linear-gradient(135deg, #fff, #fff);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.reco-settings h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #2e3a59;
+  border-bottom: 2px solid #cdd5e0;
+  padding-bottom: 10px;
+}
+
+.reco-settings label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #444;
+}
+
+.reco-settings input,
+.reco-settings select {
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: 1px solid #ccd3e0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background-color: #fff;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.reco-settings input:focus,
+.reco-settings select:focus {
+  border-color: #4e73df;
+  outline: none;
+}
+
+.reco-settings .save-btn {
+  align-self: flex-start;
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #4caf50;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.reco-settings .save-btn:hover {
+  background-color: #2e59d9;
+}
+
+@media (max-width: 768px) {
+  .reco-settings {
+    padding: 20px;
+  }
+
+  .reco-settings .save-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
