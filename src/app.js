@@ -246,6 +246,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const productName = (path.split("/")[2] || "").toLowerCase();
         const products = await getProducts();
         App.appendChild(productSearch(productName, products));
+        resetListNames();
     }
 
     // POSTITS (NOTE)
